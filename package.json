@@ -2,6 +2,7 @@
   "name": "scripts",
   "version": "1.0.0",
   "description": "A Puppeteer script",
+  "repository": "https://github.com/AlexNaga/timeLogger",
   "main": "app.js",
   "scripts": {
     "start": "node app.js"

@@ -1,7 +1,9 @@
 const { TimeLogger } = require('./src/TimeLogger');
-const config = require("../config/config.json");
-const SERVER = config.SERVER;
-const PORT = config.PORT;
+require('dotenv').config();
+
+const url = process.env.URL;
+const username = process.env.USERNAME;
+const password = process.env.PASSWORD;
 
 (async () => {
   try {

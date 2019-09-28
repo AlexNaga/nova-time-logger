@@ -3,13 +3,14 @@ const { getFilePath } = require('./lib/fileHelper');
 const { isWeekend } = require('./lib/dateHelper');
 const { openImage } = require('./lib/openImage');
 const puppeteer = require('puppeteer');
+require('dotenv').config();
 
 class TimeLogger {
   constructor(url, username, password, isDebugMode) {
     this.url = url;
     this.username = username;
     this.password = password;
-    this.debug = isDebugMode
+    this.debug = process.env.IS_DEBUG_MODE
   }
 
   async init() {
