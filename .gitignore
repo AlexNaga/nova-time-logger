@@ -1,0 +1,11 @@
+# Node packages
+node_modules
+
+# VS Code stuff
+.vscode
+
+# Output images
+puppeteer/awTimeReport/output/*.png
+
+# Secrets
+.env
