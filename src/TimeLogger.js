@@ -5,12 +5,14 @@ const { openImage } = require('./lib/openImage');
 const puppeteer = require('puppeteer');
 require('dotenv').config();
 
+const isDebugMode = process.env.IS_DEBUG_MODE === 'true' ? true : false;;
+
 class TimeLogger {
-  constructor(url, username, password, isDebugMode) {
+  constructor(url, username, password) {
     this.url = url;
     this.username = username;
     this.password = password;
-    this.debug = process.env.IS_DEBUG_MODE
+    this.debug = isDebugMode;
   }
 
   async init() {

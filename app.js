@@ -1,3 +1,4 @@
+const { errorMsg } = require('./src/lib/logHelper');
 const { TimeLogger } = require('./src/TimeLogger');
 require('dotenv').config();
 
@@ -10,6 +11,7 @@ const password = process.env.PASSWORD;
     const timeLogger = new TimeLogger(url, username, password);
     await timeLogger.run();
   } catch (error) {
-    return error(`Unexpected error occurred.`);
+    console.log(error);
+    return errorMsg(`Unexpected error occurred.`);
   }
 })();
