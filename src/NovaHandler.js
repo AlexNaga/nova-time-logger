@@ -1,6 +1,7 @@
 require('dotenv').config();
 const { errorMsg, infoMsg, successMsg, pageLog } = require('./lib/logHelper');
 const { getFilePath } = require('./lib/fileHelper');
+const { getWeekday } = require('./lib/dateHelper');
 const { openImage } = require('./lib/openImage');
 const chalk = require('chalk');
 const puppeteer = require('puppeteer');
@@ -96,7 +97,8 @@ class NovaHandler {
     await this.clickWantedProject();
     await this.clickCreateReport();
     await this.selectCategory();
-    await this.addBillableHours(8);
+    await this.addBillableHours();
+    await this.selectTeam();
   };
 
   async clickWantedProject() {
@@ -123,13 +125,38 @@ class NovaHandler {
     await this.page.keyboard.press('Enter');
   }
 
-  async addBillableHours(billableHours) {
+  async addBillableHours() {
+    let billableHours = 8;
     const hoursField = '#b0p1o388i0i0r1';
     await this.page.waitFor(hoursField);
     await this.page.click(hoursField);
-    
+
     await this.page.waitFor(500);
     await this.page.type(hoursField, billableHours.toString());
+  }
+
+  async selectTeam() {
+    const teamMenu = '#b0p1o437i0i0r1';
+    await this.page.waitFor(teamMenu);
+    await this.page.click(teamMenu);
+
+    const weekday = getWeekday();
+    const isMonday = weekday === 'monday';
+    const isTuesday = weekday === 'tuesday';
+    const isWednesday = weekday === 'wednesday';
+    const isThursday = weekday === 'thursday';
+
+    await this.page.waitFor(800);
+    await this.page.keyboard.press('ArrowDown');
+
+    if (isMonday || isTuesday) {
+      await this.page.keyboard.press('ArrowDown');
+    } else if (isWednesday || isThursday) {
+      await this.page.keyboard.press('ArrowDown');
+      await this.page.keyboard.press('ArrowDown');
+    }
+
+    await this.page.keyboard.press('Enter');
   }
 
   async selectMenuItemByTxt(menuId, searchTxt) {
