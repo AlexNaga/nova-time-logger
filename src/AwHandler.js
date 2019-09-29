@@ -1,6 +1,7 @@
 const { errorMsg, infoMsg, successMsg } = require('./lib/logHelper');
 const { getFilePath } = require('./lib/fileHelper');
 const { openImage } = require('./lib/openImage');
+const chalk = require('chalk');
 const puppeteer = require('puppeteer');
 require('dotenv').config();
 
@@ -28,7 +29,7 @@ class AwHandler {
 
   async run() {
     if (this.debug) {
-      this.page.on('console', msg => console.log('PAGE LOG:', msg.text()));
+      this.page.on('console', msg => console.log('AW PAGE LOG:', msg.text()));
     }
 
     await this.init();
@@ -48,10 +49,10 @@ class AwHandler {
     }
 
     if (shiftAlreadyExists) {
-      errorMsg('Shift already exists.');
+      errorMsg(`Shift already exists in ${chalk.cyan('AW')}.`);
     } else {
       await this.page.waitFor(200);
-      successMsg('Added shift.');
+      successMsg(`Added shift to ${chalk.cyan('AW')}.`);
     }
 
     const filePath = getFilePath();
