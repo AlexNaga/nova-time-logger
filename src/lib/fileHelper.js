@@ -7,9 +7,10 @@ const getFileName = () => {
   return filename;
 };
 
-const getFilePath = () => {
+const getFilePath = (dirName) => {
+  dirName = dirName || 'misc';
   const fileName = getFileName();
-  const filePath = `${__dirname}/../../output/${fileName}`;
+  const filePath = `${__dirname}/../../output/${dirName}/${fileName}`;
   return filePath;
 };
 

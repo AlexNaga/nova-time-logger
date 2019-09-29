@@ -6,6 +6,7 @@ node_modules
 
 # Output images
 output/*.png
+output/*/*.png
 
 # Secrets
 .env
