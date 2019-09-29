@@ -1,8 +1,7 @@
-const { errorMsg, infoMsg, successMsg } = require('./lib/logHelper');
+const { errorMsg } = require('./lib/logHelper');
 const { isWeekend } = require('./lib/dateHelper');
 const { AwHandler } = require('./AwHandler');
 const { NovaHandler } = require('./NovaHandler');
-require('dotenv').config();
 
 class TimeLogger {
   constructor() {
@@ -17,8 +16,8 @@ class TimeLogger {
     // const awHandler = new AwHandler();
     // await awHandler.run();
 
-    // const novaHandler = new NovaHandler();
-    // await novaHandler.run();
+    const novaHandler = new NovaHandler();
+    await novaHandler.run();
   }
 }
 
