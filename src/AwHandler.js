@@ -1,37 +1,34 @@
+require('dotenv').config();
 const { errorMsg, infoMsg, successMsg } = require('./lib/logHelper');
 const { getFilePath } = require('./lib/fileHelper');
 const { openImage } = require('./lib/openImage');
 const chalk = require('chalk');
 const puppeteer = require('puppeteer');
-require('dotenv').config();
-
-const url = process.env.AW_URL;
-const username = process.env.AW_USERNAME;
-const password = process.env.AW_PASSWORD;
-const isDebugMode = process.env.IS_DEBUG_MODE === 'true' ? true : false;
+const env = process.env;
+const isDebugMode = env.IS_DEBUG_MODE === 'true' ? true : false;
 
 class AwHandler {
   constructor() {
-    this.url = url;
-    this.username = username;
-    this.password = password;
+    this.url = env.AW_URL;
+    this.username = env.AW_USERNAME;
+    this.password = env.AW_PASSWORD;
     this.debug = isDebugMode;
   }
 
   async init() {
     this.browser = await puppeteer.launch({
-      headless: false,
+      headless: !this.debug,
       // slowMo: 250, // Time in ms
     });
 
     this.page = await this.browser.newPage();
+    
+    if (this.debug) {
+      this.page.on('console', msg => pageLog(`(${chalk.cyan('AW')}) ${msg.text()}`));
+    }
   }
 
   async run() {
-    if (this.debug) {
-      this.page.on('console', msg => console.log('AW PAGE LOG:', msg.text()));
-    }
-
     await this.init();
     await this.page.goto(this.url);
     await this.login(this.username, this.password);
@@ -43,7 +40,7 @@ class AwHandler {
 
     try {
       // If this element gets hidden the shift was successfully added
-      await this.page.waitForSelector('.work-shift-admin', { hidden: true, timeout: timeoutInMs });
+      await this.page.waitFor('.work-shift-admin', { hidden: true, timeout: timeoutInMs });
     } catch (error) {
       shiftAlreadyExists = true;
     }
@@ -67,13 +64,13 @@ class AwHandler {
     const pwField = '#password';
     const loginBtn = '#login-btn';
 
-    await this.page.waitForSelector(userField);
+    await this.page.waitFor(userField);
     await this.page.type(userField, user);
 
-    await this.page.waitForSelector(pwField);
+    await this.page.waitFor(pwField);
     await this.page.type(pwField, pw);
 
-    await this.page.waitForSelector(loginBtn);
+    await this.page.waitFor(loginBtn);
     await this.page.click(loginBtn);
   };
 
@@ -82,10 +79,10 @@ class AwHandler {
     const addShiftBtn = '.time-report-header-nav button';
     const timeInput = 'input[data-e2e=break]';
 
-    await this.page.waitForSelector(addShiftBtn);
+    await this.page.waitFor(addShiftBtn);
     await this.page.click(addShiftBtn);
 
-    await this.page.waitForSelector(timeInput);
+    await this.page.waitFor(timeInput);
 
     await this.page.focus(timeInput);
     await this.page.keyboard.press('Backspace');
@@ -96,7 +93,7 @@ class AwHandler {
     await this.addBreakTime();
 
     const submitShiftBtn = 'button[data-e2e=add-shift-btn]';
-    await this.page.waitForSelector(submitShiftBtn);
+    await this.page.waitFor(submitShiftBtn);
     await this.page.click(submitShiftBtn);
   };
 
