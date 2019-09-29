@@ -52,7 +52,7 @@ class AwHandler {
       successMsg(`Added shift to ${chalk.cyan('AW')}.`);
     }
 
-    const filePath = getFilePath();
+    const filePath = getFilePath('aw');
     await this.takeScreenshot(filePath);
     await openImage(filePath);
 

@@ -1,7 +1,7 @@
 require('dotenv').config();
 const { errorMsg, infoMsg, successMsg, pageLog } = require('./lib/logHelper');
 const { getFilePath } = require('./lib/fileHelper');
-const { getWeekday } = require('./lib/dateHelper');
+const { getDate, getWeekday } = require('./lib/dateHelper');
 const { openImage } = require('./lib/openImage');
 const chalk = require('chalk');
 const puppeteer = require('puppeteer');
@@ -19,13 +19,17 @@ class NovaHandler {
   async init() {
     this.browser = await puppeteer.launch({
       headless: !this.debug,
+      defaultViewport: {
+        height: 1200,
+        width: 1000,
+      }
       // slowMo: 250, // Time in ms
     });
 
     this.page = await this.browser.newPage();
 
     if (this.debug) {
-      // this.page.on('console', msg => pageLog(`(${chalk.cyan('Nova')}) ${msg.text()}`));
+      this.page.on('console', msg => pageLog(`(${chalk.cyan('Nova')}) ${msg.text()}`));
     }
   }
 
@@ -36,30 +40,57 @@ class NovaHandler {
     await this.page.waitForNavigation();
 
     await this.clickTimeReportsTab();
-    await this.addShift();
+    await this.page.waitFor(1000);
 
-    // const timeoutInMs = 2000;
-    // let shiftAlreadyExists = false;
+    let shiftAlreadyExists = await this.isShiftAlreadyAdded();
 
-    // try {
-    //   // If this element gets hidden the shift was successfully added
-    //   await this.page.waitFor('.work-shift-admin', { hidden: true, timeout: timeoutInMs });
-    // } catch (error) {
-    //   shiftAlreadyExists = true;
-    // }
+    if (shiftAlreadyExists) {
+      errorMsg(`Shift already exists in ${chalk.cyan('Nova')}.`);
+      this.closeBrowser();
+      return;
+    }
 
-    // if (shiftAlreadyExists) {
-    //   errorMsg(`Shift already exists in ${chalk.cyan('Nova')}.`);
-    // } else {
-    //   await this.page.waitFor(200);
-    //   successMsg(`Added shift to ${chalk.cyan('Nova')}.`);
-    // }
+    while (shiftAlreadyExists === false) {
+      await this.addShift();
+      await this.page.waitFor(1000);
+      shiftAlreadyExists = await this.isShiftAlreadyAdded();
+    }
 
-    // const filePath = getFilePath();
-    // await this.takeScreenshot(filePath);
-    // await openImage(filePath);
+    successMsg(`Added shift to ${chalk.cyan('Nova')}.`);
 
-    // this.closeBrowser();
+    const filePath = getFilePath('nova');
+    await this.takeScreenshot(filePath);
+    await openImage(filePath);
+
+    this.closeBrowser();
+  }
+
+  async isShiftAlreadyAdded() {
+    const allTxtContent = await this.page.$$('.text');
+    const dateNow = getDate('/');
+    let count = 0;
+
+    for (const elem of allTxtContent) {
+      const label = await this.page.evaluate(e => e.textContent.toLowerCase(), elem);
+      const dateExists = label.includes(dateNow);
+
+      if (dateExists) {
+        count++;;
+      }
+    }
+
+    count = count - 1; // Since the date is always visible on the site
+
+    const weekday = getWeekday();
+    const isFriday = weekday === 'friday';
+
+    if (isFriday && count < 3) {
+      return false;
+    } else if (count >= 1) {
+      return true;
+    }
+
+    return false;
   }
 
   async login(user, pw) {
@@ -122,7 +153,7 @@ class NovaHandler {
     await this.page.waitFor(categoryMenu);
     await this.page.click(categoryMenu);
 
-    await this.page.waitFor(300);
+    await this.page.waitFor(1000);
     await this.page.keyboard.press('ArrowDown');
     await this.page.keyboard.press('Enter');
   }
@@ -133,7 +164,7 @@ class NovaHandler {
     await this.page.waitFor(hoursField);
     await this.page.click(hoursField);
 
-    await this.page.waitFor(800);
+    await this.page.waitFor(1000);
     await this.page.type(hoursField, billableHours.toString());
   }
 
@@ -148,7 +179,7 @@ class NovaHandler {
     const isWednesday = weekday === 'wednesday';
     const isThursday = weekday === 'thursday';
 
-    await this.page.waitFor(800);
+    await this.page.waitFor(1000);
     await this.page.keyboard.press('ArrowDown');
 
     if (isMonday || isTuesday) {
@@ -220,6 +251,13 @@ class NovaHandler {
       window.clickBtn = clickBtn;
     });
   }
+
+  async takeScreenshot(filePath) {
+    await this.page.screenshot({
+      path: filePath,
+      fullPage: true,
+    });
+  };
 
   async closeBrowser() {
     await this.browser.close();
