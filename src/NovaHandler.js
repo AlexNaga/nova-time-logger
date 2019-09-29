@@ -24,7 +24,7 @@ class NovaHandler {
     this.page = await this.browser.newPage();
 
     if (this.debug) {
-      this.page.on('console', msg => pageLog(`(${chalk.cyan('Nova')}) ${msg.text()}`));
+      // this.page.on('console', msg => pageLog(`(${chalk.cyan('Nova')}) ${msg.text()}`));
     }
   }
 
@@ -34,9 +34,8 @@ class NovaHandler {
     await this.login(this.username, this.password);
     await this.page.waitForNavigation();
 
-    console.log('LOADED!');
-
-    // await this.addShift();
+    await this.clickTimeReportsTab();
+    await this.addShift();
 
     // const timeoutInMs = 2000;
     // let shiftAlreadyExists = false;
@@ -78,40 +77,102 @@ class NovaHandler {
     await this.page.click(loginBtn);
   };
 
-  async addBreakTime() {
-    const breakTimeInMinutes = '60';
-    const addShiftBtn = '.time-report-header-nav button';
-    const timeInput = 'input[data-e2e=break]';
+  async clickTimeReportsTab() {
+    const timeReportsTab = '#b0p1o331i0i0r1';
+    await this.page.waitFor(timeReportsTab);
+    await this.page.click(timeReportsTab);
+  };
 
+
+  async addShift() {
+    const addShiftBtn = '#b0p6o328i0i0r1';
     await this.page.waitFor(addShiftBtn);
     await this.page.click(addShiftBtn);
 
-    await this.page.waitFor(timeInput);
+    const projectSelection = '#b0p2o1181i0i0r1';
+    await this.page.waitFor(projectSelection);
+    await this.page.click(projectSelection);
 
-    await this.page.focus(timeInput);
-    await this.page.keyboard.press('Backspace');
-    await this.page.type(timeInput, breakTimeInMinutes, { delay: 20 });
+    await this.clickWantedProject();
+    await this.clickCreateReport();
+    await this.selectCategory();
+    await this.addBillableHours(8);
   };
 
-  async addShift() {
-    await this.addBreakTime();
+  async clickWantedProject() {
+    const projectMenu = '.menu_option';
+    await this.page.waitFor(projectMenu);
 
-    const submitShiftBtn = 'button[data-e2e=add-shift-btn]';
-    await this.page.waitFor(submitShiftBtn);
-    await this.page.click(submitShiftBtn);
-  };
+    const searchTxt = 'SO42940';
+    this.selectMenuItemByTxt(projectMenu, searchTxt);
+  }
 
-  async takeScreenshot(filePath) {
-    await this.page.screenshot({
-      path: filePath,
-      clip: {
-        x: 250,
-        y: 420,
-        width: 480,
-        height: 1515,
-      },
+  async clickCreateReport() {
+    const createReportBtn = '#b0p2o1208i0i0r1';
+    await this.page.waitFor(createReportBtn);
+    await this.page.click(createReportBtn);
+  }
+
+  async selectCategory() {
+    const categoryMenu = '#b0p1o371i0i0r1';
+    await this.page.waitFor(categoryMenu);
+    await this.page.click(categoryMenu);
+
+    await this.page.waitFor(300);
+    await this.page.keyboard.press('ArrowDown');
+    await this.page.keyboard.press('Enter');
+  }
+
+  async addBillableHours(billableHours) {
+    const hoursField = '#b0p1o388i0i0r1';
+    await this.page.waitFor(hoursField);
+    await this.page.click(hoursField);
+    
+    await this.page.waitFor(500);
+    await this.page.type(hoursField, billableHours.toString());
+  }
+
+  async selectMenuItemByTxt(menuId, searchTxt) {
+    const menuItems = await this.page.$$(menuId);
+
+    this.addScripts();
+
+    // Loop over the menu items and click the one we want
+    for (const menuItem of menuItems) {
+      const label = await this.page.evaluate(elem => elem.textContent.toLowerCase(), menuItem);
+      const isWantedItem = label.includes(searchTxt.toLowerCase());
+
+      if (isWantedItem) {
+        await this.page.evaluate(elem => {
+          clickBtn(elem)
+        }, menuItem);
+      }
+    }
+  }
+
+  // Add helper functions to the DOM
+  async addScripts() {
+    await this.page.evaluate(() => {
+      const clickBtn = (btn) => {
+        const mouseDown = new MouseEvent('mousedown', {
+          view: window,
+          bubbles: true,
+          cancelable: true,
+        });
+
+        const mouseUp = new MouseEvent('mouseup', {
+          view: window,
+          bubbles: true,
+          cancelable: true,
+        });
+
+        btn.dispatchEvent(mouseDown);
+        btn.dispatchEvent(mouseUp);
+      };
+
+      window.clickBtn = clickBtn;
     });
-  };
+  }
 
   async closeBrowser() {
     await this.browser.close();
