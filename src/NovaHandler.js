@@ -100,6 +100,7 @@ class NovaHandler {
     await this.addBillableHours();
     await this.selectTeam();
     await this.addComment();
+    await this.saveTimeReport();
   };
 
   async clickWantedProject() {
@@ -168,11 +169,15 @@ class NovaHandler {
     await this.page.type(commentField, comment);
   }
 
+  async saveTimeReport() {
+    const saveTimeReportBtn = '#b0p2o431i0i0r1';
+    await this.page.waitFor(saveTimeReportBtn);
+    await this.page.click(saveTimeReportBtn);
+  }
+
   // Loop through the menu items and find a match
   async selectMenuItemByTxt(menuId, searchTxt) {
     const menuItems = await this.page.$$(menuId);
-
-    this.addScripts();
 
     // Loop over the menu items and click the one we want
     for (const menuItem of menuItems) {
@@ -180,11 +185,16 @@ class NovaHandler {
       const isWantedItem = label.includes(searchTxt.toLowerCase());
 
       if (isWantedItem) {
-        await this.page.evaluate(elem => {
-          clickBtn(elem)
-        }, menuItem);
+        await this.clickBtn(menuItem);
       }
     }
+  }
+
+  async clickBtn(elem) {
+    await this.addScripts();
+    await this.page.evaluate(e => {
+      clickBtn(e)
+    }, elem);
   }
 
   // Add helper functions to the DOM
