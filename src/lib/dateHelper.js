@@ -23,5 +23,6 @@ const isWeekend = () => {
 
 module.exports = {
   getDate,
+  getWeekday,
   isWeekend,
 };
