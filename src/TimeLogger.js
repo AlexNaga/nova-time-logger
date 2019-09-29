@@ -11,11 +11,11 @@ class TimeLogger {
 
   async run() {
     if (isWeekend()) {
-      return infoMsg(`Can't add shifts on weekends.`);
+      // return errorMsg(`Can't add shifts on weekends.`);
     }
 
-    const awHandler = new AwHandler();
-    await awHandler.run();
+    // const awHandler = new AwHandler();
+    // await awHandler.run();
 
     // const novaHandler = new NovaHandler();
     // await novaHandler.run();
