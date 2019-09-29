@@ -1,7 +1,7 @@
 const { errorMsg } = require('./src/lib/logHelper');
 const { TimeLogger } = require('./src/TimeLogger');
 
-(async () => {
+async function main() {
   try {
     const timeLogger = new TimeLogger();
     await timeLogger.run();
@@ -9,4 +9,6 @@ const { TimeLogger } = require('./src/TimeLogger');
     console.log(error);
     return errorMsg(`Unexpected error occurred.`);
   }
-})();
+}
+
+main();
