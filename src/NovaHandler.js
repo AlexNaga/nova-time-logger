@@ -99,6 +99,7 @@ class NovaHandler {
     await this.selectCategory();
     await this.addBillableHours();
     await this.selectTeam();
+    await this.addComment();
   };
 
   async clickWantedProject() {
@@ -131,7 +132,7 @@ class NovaHandler {
     await this.page.waitFor(hoursField);
     await this.page.click(hoursField);
 
-    await this.page.waitFor(500);
+    await this.page.waitFor(800);
     await this.page.type(hoursField, billableHours.toString());
   }
 
@@ -159,6 +160,15 @@ class NovaHandler {
     await this.page.keyboard.press('Enter');
   }
 
+  async addComment(comment) {
+    comment = comment || '- ';
+    const commentField = '#b0p1o374i0i0r1';
+    await this.page.waitFor(commentField);
+    await this.page.click(commentField);
+    await this.page.type(commentField, comment);
+  }
+
+  // Loop through the menu items and find a match
   async selectMenuItemByTxt(menuId, searchTxt) {
     const menuItems = await this.page.$$(menuId);
 
