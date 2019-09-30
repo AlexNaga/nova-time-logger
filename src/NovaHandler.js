@@ -81,18 +81,19 @@ class NovaHandler {
       errorMsg(`The script doesn't match todays date on ${chalk.magenta('Nova')}.`);
     }
 
-    // TODO: Make a check that todays date on Nova, is matching with the one from the script
     const weekday = getWeekday();
     const isFriday = weekday === 'friday';
 
+    // If less than three shifts on friday, add more
     if (isFriday && count < 3) {
       return false;
     }
 
+    // Shift exists
     if (count >= 1) {
       return true;
     }
-    return false;
+    return false; // Shift doesn't exist
   }
 
   async login(user, pw) {
