@@ -1,5 +1,5 @@
-const { getDate } = require('./dateHelper');
 const os = require('os');
+const { getDate } = require('./dateHelper');
 
 const getFileName = () => {
   const dateNow = getDate();
@@ -7,16 +7,13 @@ const getFileName = () => {
   return filename;
 };
 
-const getFilePath = (dirName) => {
-  dirName = dirName || 'misc';
+const getFilePath = (dirName = 'misc') => {
   const fileName = getFileName();
   const filePath = `${__dirname}/../../output/${dirName}/${fileName}`;
   return filePath;
 };
 
-const getSystemType = () => {
-  return os.type().toLowerCase();
-};
+const getSystemType = () => os.type().toLowerCase();
 
 module.exports = {
   getFilePath,

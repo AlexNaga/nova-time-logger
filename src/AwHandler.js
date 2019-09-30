@@ -1,11 +1,12 @@
 require('dotenv').config();
-const { errorMsg, infoMsg, successMsg } = require('./lib/logHelper');
-const { getFilePath } = require('./lib/fileHelper');
-const { openImage } = require('./lib/openImage');
 const chalk = require('chalk');
 const puppeteer = require('puppeteer');
-const env = process.env;
-const isDebugMode = env.IS_DEBUG_MODE === 'true' ? true : false;
+const { errorMsg, successMsg, pageLog } = require('./lib/logHelper');
+const { getFilePath } = require('./lib/fileHelper');
+const { openImage } = require('./lib/openImage');
+
+const { env } = process;
+const isDebugMode = env.IS_DEBUG_MODE === 'true';
 
 class AwHandler {
   constructor() {
@@ -22,9 +23,9 @@ class AwHandler {
     });
 
     this.page = await this.browser.newPage();
-    
+
     if (this.debug) {
-      this.page.on('console', msg => pageLog(`(${chalk.cyan('AW')}) ${msg.text()}`));
+      this.page.on('console', (msg) => pageLog(`(${chalk.cyan('AW')}) ${msg.text()}`));
     }
   }
 
@@ -72,7 +73,7 @@ class AwHandler {
 
     await this.page.waitFor(loginBtn);
     await this.page.click(loginBtn);
-  };
+  }
 
   async addBreakTime() {
     const breakTimeInMinutes = '60';
@@ -87,7 +88,7 @@ class AwHandler {
     await this.page.focus(timeInput);
     await this.page.keyboard.press('Backspace');
     await this.page.type(timeInput, breakTimeInMinutes, { delay: 20 });
-  };
+  }
 
   async addShift() {
     await this.addBreakTime();
@@ -95,7 +96,7 @@ class AwHandler {
     const submitShiftBtn = 'button[data-e2e=add-shift-btn]';
     await this.page.waitFor(submitShiftBtn);
     await this.page.click(submitShiftBtn);
-  };
+  }
 
   async takeScreenshot(filePath) {
     await this.page.screenshot({
@@ -107,7 +108,7 @@ class AwHandler {
         height: 1515,
       },
     });
-  };
+  }
 
   async closeBrowser() {
     await this.browser.close();

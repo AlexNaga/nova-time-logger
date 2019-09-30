@@ -1,5 +1,5 @@
-const { getSystemType } = require('./fileHelper');
 const open = require('open');
+const { getSystemType } = require('./fileHelper');
 
 const openImage = async (filePath) => {
   const systemType = getSystemType();
