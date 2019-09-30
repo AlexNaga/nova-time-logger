@@ -7,14 +7,13 @@ const { getDate, getWeekday } = require('./lib/dateHelper');
 const { openImage } = require('./lib/openImage');
 
 const { env } = process;
-const isDebugMode = env.IS_DEBUG_MODE === 'true';
 
 class NovaHandler {
   constructor() {
     this.url = env.NOVA_URL;
     this.username = env.NOVA_USERNAME;
     this.password = env.NOVA_PASSWORD;
-    this.debug = isDebugMode;
+    this.debug = env.IS_DEBUG_MODE;
   }
 
   async init() {
@@ -137,7 +136,7 @@ class NovaHandler {
     await this.selectCategory();
     await this.addBillableHours();
     await this.selectTeam();
-    await this.addComment();
+    await this.addComment(env.MESSAGE);
     await this.saveTimeReport();
   }
 

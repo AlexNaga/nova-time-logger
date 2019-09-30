@@ -6,14 +6,13 @@ const { getFilePath } = require('./lib/fileHelper');
 const { openImage } = require('./lib/openImage');
 
 const { env } = process;
-const isDebugMode = env.IS_DEBUG_MODE === 'true';
 
 class AwHandler {
   constructor() {
     this.url = env.AW_URL;
     this.username = env.AW_USERNAME;
     this.password = env.AW_PASSWORD;
-    this.debug = isDebugMode;
+    this.debug = env.IS_DEBUG_MODE;
   }
 
   async init() {
