@@ -21,8 +21,8 @@ class NovaHandler {
       headless: !this.debug,
       defaultViewport: {
         height: 1200,
-        width: 1000,
-      },
+        width: 1000
+      }
       // slowMo: 250, // Time in ms
     });
 
@@ -117,7 +117,6 @@ class NovaHandler {
     await this.page.waitFor(timeReportsTab);
     await this.page.click(timeReportsTab);
   }
-
 
   async addShift() {
     const addShiftBtn = '#b0p6o328i0i0r1';
@@ -238,13 +237,13 @@ class NovaHandler {
         const mouseDown = new MouseEvent('mousedown', {
           view: window,
           bubbles: true,
-          cancelable: true,
+          cancelable: true
         });
 
         const mouseUp = new MouseEvent('mouseup', {
           view: window,
           bubbles: true,
-          cancelable: true,
+          cancelable: true
         });
 
         btn.dispatchEvent(mouseDown);
@@ -258,7 +257,7 @@ class NovaHandler {
   async takeScreenshot(filePath) {
     await this.page.screenshot({
       path: filePath,
-      fullPage: true,
+      fullPage: true
     });
   }
 
