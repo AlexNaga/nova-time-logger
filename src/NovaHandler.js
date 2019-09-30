@@ -14,6 +14,7 @@ class NovaHandler {
     this.username = env.NOVA_USERNAME;
     this.password = env.NOVA_PASSWORD;
     this.debug = env.IS_DEBUG_MODE;
+    this.shiftsAddedCount = 0;
   }
 
   async init() {
@@ -40,7 +41,7 @@ class NovaHandler {
     await this.page.waitForNavigation();
 
     await this.clickTimeReportsTab();
-    await this.page.waitFor(1000);
+    await this.page.waitFor(1200); // Wait for time reports page to load
 
     let shiftAlreadyExists = await this.isShiftAlreadyAdded();
 
@@ -51,7 +52,8 @@ class NovaHandler {
 
     while (shiftAlreadyExists === false) {
       await this.addShift();
-      await this.page.waitFor(1000);
+      this.shiftsAddedCount += 1;
+      await this.page.waitFor(1200); // Wait for time reports page to load
       shiftAlreadyExists = await this.isShiftAlreadyAdded();
     }
 
@@ -81,8 +83,7 @@ class NovaHandler {
       errorMsg(`The script doesn't match todays date on ${chalk.magenta('Nova')}.`);
     }
 
-    const weekday = getWeekday();
-    const isFriday = weekday === 'friday';
+    const isFriday = getWeekday() === 'friday';
 
     // If less than three shifts on friday, add more
     if (isFriday && count < 3) {
@@ -161,11 +162,21 @@ class NovaHandler {
   }
 
   async addBillableHours() {
-    // TODO: Change this in fridays
-    const billableHours = 8;
     const hoursField = '#b0p1o388i0i0r1';
     await this.page.waitFor(hoursField);
     await this.page.click(hoursField);
+
+    let billableHours = 8;
+    const isFriday = getWeekday() === 'friday';
+
+    // TODO: On fridays we need to add three shifts to different team and with billable hours
+    if (isFriday) {
+      if (this.shiftsAddedCount === 0) {
+        billableHours = 4;
+      } else {
+        billableHours = 2;
+      }
+    }
 
     await this.page.waitFor(1000);
     await this.page.type(hoursField, billableHours.toString());
