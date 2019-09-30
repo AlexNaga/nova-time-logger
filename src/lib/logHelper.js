@@ -1,7 +1,7 @@
 const chalk = require('chalk');
 
 const errorMsg = (msg) => {
-  console.log(chalk.red.bold('Error: ') + msg);
+  throw new Error(msg);
 };
 
 const infoMsg = (msg) => {
