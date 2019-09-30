@@ -29,7 +29,7 @@ class NovaHandler {
     this.page = await this.browser.newPage();
 
     if (this.debug) {
-      this.page.on('console', (msg) => pageLog(`(${chalk.cyan('Nova')}) ${msg.text()}`));
+      this.page.on('console', (msg) => pageLog(`(${chalk.magenta('Nova')}) ${msg.text()}`));
     }
   }
 
@@ -45,8 +45,8 @@ class NovaHandler {
     let shiftAlreadyExists = await this.isShiftAlreadyAdded();
 
     if (shiftAlreadyExists) {
-      errorMsg(`Shift already exists in ${chalk.cyan('Nova')}.`);
       await this.exit();
+      errorMsg(`Shift already exists in ${chalk.magenta('Nova')}.`);
     }
 
     while (shiftAlreadyExists === false) {
@@ -55,11 +55,7 @@ class NovaHandler {
       shiftAlreadyExists = await this.isShiftAlreadyAdded();
     }
 
-    successMsg(`Added shift to ${chalk.cyan('Nova')}.`);
-
-    const filePath = getFilePath('nova');
-    await this.takeScreenshot(filePath);
-    await openImage(filePath);
+    successMsg(`Added shift to ${chalk.magenta('Nova')}.`);
 
     await this.exit();
   }
@@ -81,8 +77,8 @@ class NovaHandler {
     count -= 1; // Since the date is always visible on the site
 
     if (count < 0) {
-      errorMsg(`The script doesn't match todays date on ${chalk.cyan('Nova')}.`);
       await this.exit();
+      errorMsg(`The script doesn't match todays date on ${chalk.magenta('Nova')}.`);
     }
 
     // TODO: Make a check that todays date on Nova, is matching with the one from the script
@@ -265,9 +261,15 @@ class NovaHandler {
     });
   }
 
-  async exit() {
+  async closeBrowser() {
     await this.browser.close();
-    process.exit();
+  }
+
+  async exit() {
+    const filePath = getFilePath('aw');
+    await this.takeScreenshot(filePath);
+    await openImage(filePath);
+    await this.closeBrowser();
   }
 }
 

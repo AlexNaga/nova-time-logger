@@ -46,17 +46,14 @@ class AwHandler {
     }
 
     if (shiftAlreadyExists) {
+      await this.exit();
       errorMsg(`Shift already exists in ${chalk.cyan('AW')}.`);
     } else {
       await this.page.waitFor(200);
       successMsg(`Added shift to ${chalk.cyan('AW')}.`);
     }
 
-    const filePath = getFilePath('aw');
-    await this.takeScreenshot(filePath);
-    await openImage(filePath);
-
-    this.closeBrowser();
+    await this.exit();
   }
 
   async login(user, pw) {
@@ -111,6 +108,13 @@ class AwHandler {
 
   async closeBrowser() {
     await this.browser.close();
+  }
+
+  async exit() {
+    const filePath = getFilePath('aw');
+    await this.takeScreenshot(filePath);
+    await openImage(filePath);
+    await this.closeBrowser();
   }
 }
 
