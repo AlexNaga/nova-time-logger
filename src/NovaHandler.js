@@ -266,7 +266,7 @@ class NovaHandler {
   }
 
   async exit() {
-    const filePath = getFilePath('aw');
+    const filePath = getFilePath('nova');
     await this.takeScreenshot(filePath);
     await openImage(filePath);
     await this.closeBrowser();
