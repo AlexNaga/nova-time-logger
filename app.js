@@ -7,7 +7,7 @@ async function main() {
     await timeLogger.run();
   } catch (error) {
     console.log(error);
-    return errorMsg(`Unexpected error occurred.`);
+    return errorMsg('Unexpected error occurred.');
   }
 }
 

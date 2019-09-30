@@ -1,12 +1,13 @@
 require('dotenv').config();
-const { errorMsg, infoMsg, successMsg, pageLog } = require('./lib/logHelper');
+const chalk = require('chalk');
+const puppeteer = require('puppeteer');
+const { errorMsg, successMsg, pageLog } = require('./lib/logHelper');
 const { getFilePath } = require('./lib/fileHelper');
 const { getDate, getWeekday } = require('./lib/dateHelper');
 const { openImage } = require('./lib/openImage');
-const chalk = require('chalk');
-const puppeteer = require('puppeteer');
-const env = process.env;
-const isDebugMode = env.IS_DEBUG_MODE === 'true' ? true : false;
+
+const { env } = process;
+const isDebugMode = env.IS_DEBUG_MODE === 'true';
 
 class NovaHandler {
   constructor() {
@@ -22,14 +23,14 @@ class NovaHandler {
       defaultViewport: {
         height: 1200,
         width: 1000,
-      }
+      },
       // slowMo: 250, // Time in ms
     });
 
     this.page = await this.browser.newPage();
 
     if (this.debug) {
-      this.page.on('console', msg => pageLog(`(${chalk.cyan('Nova')}) ${msg.text()}`));
+      this.page.on('console', (msg) => pageLog(`(${chalk.cyan('Nova')}) ${msg.text()}`));
     }
   }
 
@@ -46,8 +47,7 @@ class NovaHandler {
 
     if (shiftAlreadyExists) {
       errorMsg(`Shift already exists in ${chalk.cyan('Nova')}.`);
-      this.closeBrowser();
-      return;
+      await this.exit();
     }
 
     while (shiftAlreadyExists === false) {
@@ -62,7 +62,7 @@ class NovaHandler {
     await this.takeScreenshot(filePath);
     await openImage(filePath);
 
-    this.closeBrowser();
+    await this.exit();
   }
 
   async isShiftAlreadyAdded() {
@@ -71,25 +71,32 @@ class NovaHandler {
     let count = 0;
 
     for (const elem of allTxtContent) {
-      const label = await this.page.evaluate(e => e.textContent.toLowerCase(), elem);
+      const label = await this.page.evaluate((e) => e.textContent.toLowerCase(), elem);
       const dateExists = label.includes(dateNow);
 
       if (dateExists) {
-        count++;;
+        count++;
       }
     }
 
-    count = count - 1; // Since the date is always visible on the site
+    count -= 1; // Since the date is always visible on the site
 
+    if (count < 0) {
+      errorMsg(`The script doesn't match todays date on ${chalk.cyan('Nova')}.`);
+      await this.exit();
+    }
+
+    // TODO: Make a check that todays date on Nova, is matching with the one from the script
     const weekday = getWeekday();
     const isFriday = weekday === 'friday';
 
     if (isFriday && count < 3) {
       return false;
-    } else if (count >= 1) {
-      return true;
     }
 
+    if (count >= 1) {
+      return true;
+    }
     return false;
   }
 
@@ -107,13 +114,13 @@ class NovaHandler {
 
     await this.page.waitFor(loginBtn);
     await this.page.click(loginBtn);
-  };
+  }
 
   async clickTimeReportsTab() {
     const timeReportsTab = '#b0p1o331i0i0r1';
     await this.page.waitFor(timeReportsTab);
     await this.page.click(timeReportsTab);
-  };
+  }
 
 
   async addShift() {
@@ -132,7 +139,7 @@ class NovaHandler {
     await this.selectTeam();
     await this.addComment();
     await this.saveTimeReport();
-  };
+  }
 
   async clickWantedProject() {
     const projectMenu = '.menu_option';
@@ -159,7 +166,8 @@ class NovaHandler {
   }
 
   async addBillableHours() {
-    let billableHours = 8;
+    // TODO: Change this in fridays
+    const billableHours = 8;
     const hoursField = '#b0p1o388i0i0r1';
     await this.page.waitFor(hoursField);
     await this.page.click(hoursField);
@@ -192,8 +200,7 @@ class NovaHandler {
     await this.page.keyboard.press('Enter');
   }
 
-  async addComment(comment) {
-    comment = comment || '- ';
+  async addComment(comment = '- ') {
     const commentField = '#b0p1o374i0i0r1';
     await this.page.waitFor(commentField);
     await this.page.click(commentField);
@@ -212,7 +219,7 @@ class NovaHandler {
 
     // Loop over the menu items and click the one we want
     for (const menuItem of menuItems) {
-      const label = await this.page.evaluate(elem => elem.textContent.toLowerCase(), menuItem);
+      const label = await this.page.evaluate((elem) => elem.textContent.toLowerCase(), menuItem);
       const isWantedItem = label.includes(searchTxt.toLowerCase());
 
       if (isWantedItem) {
@@ -223,8 +230,8 @@ class NovaHandler {
 
   async clickBtn(elem) {
     await this.addScripts();
-    await this.page.evaluate(e => {
-      clickBtn(e)
+    await this.page.evaluate((e) => {
+      clickBtn(e);
     }, elem);
   }
 
@@ -257,10 +264,11 @@ class NovaHandler {
       path: filePath,
       fullPage: true,
     });
-  };
+  }
 
-  async closeBrowser() {
+  async exit() {
     await this.browser.close();
+    process.exit();
   }
 }
 

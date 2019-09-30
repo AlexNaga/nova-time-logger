@@ -1,7 +1,6 @@
 const moment = require('moment');
 
-const getDate = (divider) => {
-  divider = divider || '-';
+const getDate = (divider = '-') => {
   const dateNow = moment().format(`YYYY${divider}MM${divider}DD`);
   return dateNow;
 };
@@ -17,9 +16,8 @@ const isWeekend = () => {
 
   if (weekday === 'saturday' || weekday === 'sunday') {
     return true;
-  } else {
-    return false;
   }
+  return false;
 };
 
 module.exports = {
