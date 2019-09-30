@@ -75,7 +75,7 @@ class NovaHandler {
       const dateExists = label.includes(dateNow);
 
       if (dateExists) {
-        count++;
+        count += 1;
       }
     }
 
