@@ -19,18 +19,24 @@ class TimeLogger {
       {
         text: chalk.cyan('Academic Work'),
         tasks: taskz([
-          { text: 'Adding time report.', task: async () => awHandler.run() },
+          {
+            text: 'Adding time report.',
+            task: async () => await awHandler.run()
+          },
         ]),
       },
       {
         text: chalk.magenta('Nova'),
         tasks: taskz([
-          { text: 'Adding time report.', task: async () => novaHandler.run() },
+          {
+            text: 'Adding time report.',
+            task: async () => novaHandler.run()
+          },
         ]),
       },
     ], { parallel: true });
 
-    return tasks.run();
+    tasks.run();
   }
 }
 
