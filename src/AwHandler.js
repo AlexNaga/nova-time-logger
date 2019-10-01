@@ -13,11 +13,16 @@ class AwHandler {
     this.username = env.AW_USERNAME;
     this.password = env.AW_PASSWORD;
     this.debug = env.IS_DEBUG_MODE;
+    this.shiftAlreadyExists = false;
   }
 
   async init() {
     this.browser = await puppeteer.launch({
       headless: !this.debug,
+      defaultViewport: {
+        height: 1800,
+        width: 1200
+      }
       // slowMo: 250, // Time in ms
     });
 
@@ -36,16 +41,15 @@ class AwHandler {
     await this.addShift();
 
     const timeoutInMs = 2000;
-    let shiftAlreadyExists = false;
 
     try {
       // If this element gets hidden the shift was successfully added
       await this.page.waitFor('.work-shift-admin', { hidden: true, timeout: timeoutInMs });
     } catch (error) {
-      shiftAlreadyExists = true;
+      this.shiftAlreadyExists = true;
     }
 
-    if (shiftAlreadyExists) {
+    if (this.shiftAlreadyExists) {
       await this.exit();
       errorMsg(`Shift already exists in ${chalk.cyan('AW')}.`);
     } else {
@@ -95,13 +99,22 @@ class AwHandler {
   }
 
   async takeScreenshot(filePath) {
+    const screenshotSize = {
+      height: 950,
+      width: 830,
+      x: 330,
+      y: 420,
+    };
+
+    if (this.shiftAlreadyExists) {
+      screenshotSize.height = 1400;
+      screenshotSize.width = 830;
+    }
+
     await this.page.screenshot({
       path: filePath,
       clip: {
-        x: 250,
-        y: 420,
-        width: 480,
-        height: 1515,
+        ...screenshotSize
       },
     });
   }
