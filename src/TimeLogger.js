@@ -7,7 +7,7 @@ const { AwHandler } = require('./AwHandler');
 const { NovaHandler } = require('./NovaHandler');
 
 class TimeLogger {
-  run() {
+  async run() {
     if (isWeekend()) {
       return errorMsg('Can\'t add shifts on weekends.');
     }
@@ -30,13 +30,16 @@ class TimeLogger {
         tasks: taskz([
           {
             text: 'Adding time report.',
-            task: async () => novaHandler.run()
+            task: async () => await novaHandler.run()
           },
         ]),
       },
+
     ], { parallel: true });
 
-    tasks.run();
+    // ]);
+
+    await tasks.run();
   }
 }
 
