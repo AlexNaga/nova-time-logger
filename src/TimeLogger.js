@@ -16,15 +16,15 @@ class TimeLogger {
     const novaHandler = new NovaHandler();
 
     const tasks = taskz([
-      // {
-      //   text: chalk.cyan('Academic Work'),
-      //   tasks: taskz([
-      //     {
-      //       text: 'Adding time report.',
-      //       task: async () => await awHandler.run()
-      //     },
-      //   ]),
-      // },
+      {
+        text: chalk.cyan('Academic Work'),
+        tasks: taskz([
+          {
+            text: 'Adding time report.',
+            task: async () => await awHandler.run()
+          },
+        ]),
+      },
       {
         text: chalk.magenta('Nova'),
         tasks: taskz([
@@ -35,9 +35,9 @@ class TimeLogger {
         ]),
       },
 
-      // ], { parallel: true });
+    ], { parallel: true });
 
-    ]);
+    // ]);
 
     await tasks.run();
   }
