@@ -13,13 +13,19 @@ async function main() {
   if (program.debug === true) env.IS_DEBUG_MODE = true;
   if (program.message) env.MESSAGE = program.message;
 
-  // const timer = new Timer();
-  // timer.start();
+  const timer = new Timer();
+  const isDebug = env.IS_DEBUG_MODE;
+
+  if (isDebug) {
+    timer.start();
+  }
 
   const timeLogger = new TimeLogger();
   await timeLogger.run();
 
-  // timer.stop();
+  if (isDebug) {
+    timer.stop();
+  }
 }
 
 main();
