@@ -5,6 +5,12 @@ const getDate = (divider = '-') => {
   return dateNow;
 };
 
+const getMonth = () => {
+  const monthAsNr = moment().month();
+  const month = moment.months(monthAsNr).toLowerCase();
+  return month;
+};
+
 const getWeekday = () => {
   const weekdayAsNr = moment().weekday();
   const weekday = moment.weekdays(weekdayAsNr).toLowerCase();
@@ -22,6 +28,7 @@ const isWeekend = () => {
 
 module.exports = {
   getDate,
+  getMonth,
   getWeekday,
   isWeekend,
 };

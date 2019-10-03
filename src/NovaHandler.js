@@ -3,7 +3,7 @@ const chalk = require('chalk');
 const puppeteer = require('puppeteer');
 const { errorMsg, successMsg, pageLog } = require('./lib/logHelper');
 const { getFilePath } = require('./lib/fileHelper');
-const { getDate, getWeekday } = require('./lib/dateHelper');
+const { getDate, getMonth, getWeekday } = require('./lib/dateHelper');
 const { openImage } = require('./lib/openImage');
 
 const { env } = process;
@@ -30,7 +30,7 @@ class NovaHandler {
     this.page = await this.browser.newPage();
 
     if (this.debug) {
-      this.page.on('console', (msg) => pageLog(`(${chalk.magenta('Nova')}) ${msg.text()}`));
+      // this.page.on('console', (msg) => pageLog(`(${chalk.magenta('Nova')}) ${msg.text()}`));
     }
   }
 
@@ -40,8 +40,8 @@ class NovaHandler {
     await this.login(this.username, this.password);
     await this.page.waitForNavigation();
 
-    await this.clickTimeReportsTab();
-    await this.page.waitFor(1200); // Wait for time reports page to load
+    await this.isSameDate();
+    await this.clickTimeReportTab();
 
     let shiftAlreadyExists = await this.isShiftAlreadyAdded();
 
@@ -113,10 +113,35 @@ class NovaHandler {
     await this.page.click(loginBtn);
   }
 
-  async clickTimeReportsTab() {
-    const timeReportsTab = '#b0p1o331i0i0r1';
-    await this.page.waitFor(timeReportsTab);
-    await this.page.click(timeReportsTab);
+  async isSameDate() {
+    try {
+      const dateNow = getDate('/');
+      await this.hasPageTxt(dateNow);
+    } catch (error) {
+      await this.exit();
+      errorMsg(`The script doesn't match todays date on ${chalk.magenta('Nova')}.`);
+    }
+  }
+
+  async clickTimeReportTab() {
+    try {
+      const timeReportTab = '#b0p1o331i0i0r1';
+      await this.page.waitFor(timeReportTab);
+      await this.page.click(timeReportTab);
+
+      const monthNow = getMonth(); // This only exists on time report tab
+      await this.hasPageTxt(monthNow);
+    } catch (error) {
+      await this.exit();
+      errorMsg(`Can\'t open time reports tab on ${chalk.magenta('Nova')}.`);
+    }
+  }
+
+  async hasPageTxt(searchTxt) {
+    return await this.page.waitForFunction(searchTxt => {
+      const txtOnPage = document.querySelector('body').innerText.toLowerCase();
+      return txtOnPage.includes(searchTxt);
+    }, {}, searchTxt);
   }
 
   async addShift() {
