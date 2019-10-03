@@ -41,7 +41,7 @@ class NovaHandler {
     await this.page.waitForNavigation();
 
     await this.isSameDate();
-    await this.clickTimeReportTab();
+    await this.clickTimeReportPage();
 
     let shiftAlreadyExists = await this.isShiftAlreadyAdded();
 
@@ -53,12 +53,11 @@ class NovaHandler {
     while (shiftAlreadyExists === false) {
       await this.addShift();
       this.shiftsAddedCount += 1;
-      await this.page.waitFor(1200); // Wait for time reports page to load
+      await this.waitForTimeReportPage();
       shiftAlreadyExists = await this.isShiftAlreadyAdded();
     }
 
     successMsg(`Added shift to ${chalk.magenta('Nova')}.`);
-
     await this.exit();
   }
 
@@ -102,15 +101,26 @@ class NovaHandler {
     const pwField = '#login_pwd';
     const loginBtn = '#login_nonguest';
 
-    await this.page.waitFor(userField);
-    await this.page.waitFor(500);
+    await this.waitForLoginPage();
     await this.page.type(userField, user);
-
-    await this.page.waitFor(pwField);
     await this.page.type(pwField, pw);
-
-    await this.page.waitFor(loginBtn);
     await this.page.click(loginBtn);
+  }
+
+  async waitForLoginPage() {
+    const userField = '#login_name';
+    const pwField = '#login_pwd';
+    const loginBtn = '#login_nonguest';
+
+    try {
+      await this.page.waitFor(userField);
+      await this.page.waitFor(pwField);
+      await this.page.waitFor(loginBtn);
+      await this.hasPageTxt('sign in');
+    } catch (error) {
+      await this.exit();
+      errorMsg(`Can\'t open login page on ${chalk.magenta('Nova')}.`);
+    }
   }
 
   async isSameDate() {
@@ -123,17 +133,20 @@ class NovaHandler {
     }
   }
 
-  async clickTimeReportTab() {
-    try {
-      const timeReportTab = '#b0p1o331i0i0r1';
-      await this.page.waitFor(timeReportTab);
-      await this.page.click(timeReportTab);
+  async clickTimeReportPage() {
+    const timeReportTab = '#b0p1o331i0i0r1';
+    await this.page.waitFor(timeReportTab);
+    await this.page.click(timeReportTab);
+    await this.waitForTimeReportPage();
+  }
 
-      const monthNow = getMonth(); // This only exists on time report tab
+  async waitForTimeReportPage() {
+    try {
+      const monthNow = getMonth(); // This only exists on time report page
       await this.hasPageTxt(monthNow);
     } catch (error) {
       await this.exit();
-      errorMsg(`Can\'t open time reports tab on ${chalk.magenta('Nova')}.`);
+      errorMsg(`Can\'t open time reports page on ${chalk.magenta('Nova')}.`);
     }
   }
 
