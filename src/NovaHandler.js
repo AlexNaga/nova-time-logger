@@ -207,7 +207,6 @@ class NovaHandler {
     let billableHours = 8;
     const isFriday = getWeekday() === 'friday';
 
-    // TODO: On fridays we need to add three shifts to different team and with billable hours
     if (isFriday) {
       if (this.shiftsAddedCount === 0) {
         billableHours = 4;
@@ -230,15 +229,27 @@ class NovaHandler {
     const isTuesday = weekday === 'tuesday';
     const isWednesday = weekday === 'wednesday';
     const isThursday = weekday === 'thursday';
+    const isFriday = weekday === 'friday';
 
     await this.page.waitFor(1000);
     await this.page.keyboard.press('ArrowDown');
 
     if (isMonday || isTuesday) {
       await this.page.keyboard.press('ArrowDown');
-    } else if (isWednesday || isThursday) {
+    }
+
+    if (isWednesday || isThursday) {
       await this.page.keyboard.press('ArrowDown');
       await this.page.keyboard.press('ArrowDown');
+    }
+
+    if (isFriday) {
+      if (this.shiftsAddedCount === 1) {
+        await this.page.keyboard.press('ArrowDown');
+      } else if (this.shiftsAddedCount === 2) {
+        await this.page.keyboard.press('ArrowDown');
+        await this.page.keyboard.press('ArrowDown');
+      }
     }
 
     await this.page.keyboard.press('Enter');
