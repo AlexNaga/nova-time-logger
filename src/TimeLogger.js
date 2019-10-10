@@ -25,6 +25,7 @@ class TimeLogger {
           },
         ]),
       },
+
       {
         text: chalk.magenta('Nova'),
         tasks: taskz([
@@ -36,8 +37,6 @@ class TimeLogger {
       },
 
     ], { parallel: true });
-
-    // ]);
 
     await tasks.run();
   }
