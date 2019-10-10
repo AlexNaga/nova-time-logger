@@ -100,14 +100,14 @@ class AwHandler {
 
   async takeScreenshot(filePath) {
     const screenshotSize = {
-      height: 800,
+      height: 950,
       width: 830,
       x: 330,
-      y: 510,
+      y: 350,
     };
 
     if (this.shiftAlreadyExists) {
-      screenshotSize.height = 1230;
+      screenshotSize.height = 1400;
       screenshotSize.width = 830;
     }
 
