@@ -2,7 +2,7 @@ require('dotenv').config();
 const chalk = require('chalk');
 const puppeteer = require('puppeteer');
 const { errorMsg, successMsg, pageLog } = require('./lib/logHelper');
-const { getFilePath } = require('./lib/fileHelper');
+const { capitalize, getFilePath } = require('./lib/fileHelper');
 const { getDate, getMonth, getWeekday } = require('./lib/dateHelper');
 const { openImage } = require('./lib/openImage');
 
@@ -14,6 +14,7 @@ class NovaHandler {
     this.username = env.NOVA_USERNAME;
     this.password = env.NOVA_PASSWORD;
     this.debug = env.IS_DEBUG_MODE;
+    this.showConsoleLog = env.SHOW_CONSOLE_LOG;
     this.shiftsAddedCount = 0;
   }
 
@@ -29,8 +30,8 @@ class NovaHandler {
 
     this.page = await this.browser.newPage();
 
-    if (this.debug) {
-      // this.page.on('console', (msg) => pageLog(`(${chalk.magenta('Nova')}) ${msg.text()}`));
+    if (this.showConsoleLog) {
+      this.page.on('console', (msg) => pageLog(`(${chalk.magenta('Nova')}) ${msg.text()}`));
     }
   }
 
@@ -231,7 +232,7 @@ class NovaHandler {
     const isThursday = weekday === 'thursday';
     const isFriday = weekday === 'friday';
 
-    await this.page.waitFor(1000);
+    await this.page.waitFor(1500);
     await this.page.keyboard.press('ArrowDown');
 
     if (isMonday || isTuesday) {
@@ -260,6 +261,7 @@ class NovaHandler {
     await this.page.waitFor(commentField);
     await this.page.click(commentField);
     await this.page.type(commentField, comment);
+    await this.page.waitFor(1000);
   }
 
   async saveTimeReport() {
@@ -314,10 +316,38 @@ class NovaHandler {
     });
   }
 
+  async getElemTopPosition(elem) {
+    return await this.page.evaluate(elem => {
+      const rect = elem.getBoundingClientRect();
+      return rect.top + window.scrollY;
+    }, elem);
+  }
+
+  async getScreenshotHeight() {
+    try {
+      const monthNow = capitalize(getMonth());
+      const elem = (await this.page.$x(`//*[contains(text(), "${monthNow}")]`))[1];
+      return await this.getElemTopPosition(elem);
+    } catch (error) {
+      await this.exit();
+      errorMsg(`Can't get screenshot height on ${chalk.magenta('Nova')}.`);
+    }
+  }
+
   async takeScreenshot(filePath) {
+    const screenshotHeight = await this.getScreenshotHeight();
+    const screenshotSize = {
+      height: screenshotHeight,
+      width: 960,
+      x: 30,
+      y: 20,
+    };
+
     await this.page.screenshot({
       path: filePath,
-      fullPage: true
+      clip: {
+        ...screenshotSize
+      },
     });
   }
 

@@ -28,7 +28,7 @@ class AwHandler {
 
     this.page = await this.browser.newPage();
 
-    if (this.debug) {
+    if (this.showConsoleLog) {
       this.page.on('console', (msg) => pageLog(`(${chalk.cyan('AW')}) ${msg.text()}`));
     }
   }
