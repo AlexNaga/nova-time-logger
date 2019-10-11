@@ -6,11 +6,13 @@ const { env } = process;
 async function main() {
   program
     .usage('[options] <command>')
-    .option('-d, --debug', 'Output page logs and show browser')
+    .option('-d, --debug', 'Show browser')
+    .option('-l, --logs', 'Output page logs')
     .option('-m, --message <comment>', 'Activities done during the time period')
     .parse(process.argv);
 
   if (program.debug === true) env.IS_DEBUG_MODE = true;
+  if (program.logs === true) env.SHOW_CONSOLE_LOG = true;
   if (program.message) env.MESSAGE = program.message;
 
   const timer = new Timer();
