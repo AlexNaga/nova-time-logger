@@ -15,7 +15,10 @@ const getFilePath = (dirName = 'misc') => {
 
 const getSystemType = () => os.type().toLowerCase();
 
+const capitalize = str => str && str[0].toUpperCase() + str.slice(1);
+
 module.exports = {
+  capitalize,
   getFilePath,
   getSystemType,
 };

@@ -36,7 +36,9 @@ class TimeLogger {
         ]),
       },
 
-    ], { parallel: true });
+    ], { parallel: true }); // Comment this out if time logging is needed
+
+    // ]); // Uncomment this if time logging is needed
 
     await tasks.run();
   }
