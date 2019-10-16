@@ -5,6 +5,7 @@ const { errorMsg } = require('./lib/logHelper');
 const { isWeekend } = require('./lib/dateHelper');
 const { AwHandler } = require('./AwHandler');
 const { NovaHandler } = require('./NovaHandler');
+const { env } = process;
 
 class TimeLogger {
   async run() {
@@ -25,7 +26,6 @@ class TimeLogger {
           },
         ]),
       },
-
       {
         text: chalk.magenta('Nova'),
         tasks: taskz([
@@ -35,10 +35,7 @@ class TimeLogger {
           },
         ]),
       },
-
-    ], { parallel: true }); // Comment this out if time logging is needed
-
-    // ]); // Uncomment this if time logging is needed
+    ], { parallel: !env.IS_DEBUG_MODE });
 
     await tasks.run();
   }
