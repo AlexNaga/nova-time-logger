@@ -11,7 +11,7 @@ class AwHandler {
     this.url = env.AW_URL;
     this.username = env.AW_USERNAME;
     this.password = env.AW_PASSWORD;
-    this.debug = env.IS_DEBUG_MODE;
+    this.debug = env.IS_DEBUG_MODE === 'true';
     this.shiftAlreadyExists = false;
   }
 
