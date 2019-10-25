@@ -2,7 +2,7 @@ const chalk = require('chalk');
 const puppeteer = require('puppeteer');
 const { errorMsg, successMsg, pageLog } = require('./lib/logHelper');
 const { capitalize, getFilePath } = require('./lib/fileHelper');
-const { getDate, getMonth, getWeekday } = require('./lib/dateHelper');
+const { getDate, getMonth } = require('./lib/dateHelper');
 const { openImage } = require('./lib/openImage');
 
 const { env } = process;
@@ -12,9 +12,8 @@ class NovaHandler {
     this.url = env.NOVA_URL;
     this.username = env.NOVA_USERNAME;
     this.password = env.NOVA_PASSWORD;
-    this.debug = env.IS_DEBUG_MODE;
-    this.showConsoleLog = env.SHOW_CONSOLE_LOG;
-    this.shiftsAddedCount = 0;
+    this.debug = env.IS_DEBUG_MODE === 'true';
+    this.showConsoleLog = env.SHOW_CONSOLE_LOG === 'true';
   }
 
   async init() {
@@ -52,7 +51,6 @@ class NovaHandler {
 
     while (shiftAlreadyExists === false) {
       await this.addShift();
-      this.shiftsAddedCount += 1;
       await this.waitForTimeReportPage();
       shiftAlreadyExists = await this.isShiftAlreadyAdded();
     }
@@ -64,33 +62,26 @@ class NovaHandler {
   async isShiftAlreadyAdded() {
     const allTxtContent = await this.page.$$('.text');
     const dateNow = getDate('/');
-    let count = 0;
+    let dateCount = 0;
 
     for (const elem of allTxtContent) {
       const label = await this.page.evaluate((e) => e.textContent.toLowerCase(), elem);
       const dateExists = label.includes(dateNow);
 
       if (dateExists) {
-        count += 1;
+        dateCount += 1;
       }
     }
 
-    count -= 1; // Since the date is always visible on the site
+    dateCount -= 1; // Since the date is always visible on the site
 
-    if (count < 0) {
+    if (dateCount < 0) {
       await this.exit();
       errorMsg(`The script doesn't match todays date on ${chalk.magenta('Nova')}.`);
     }
 
-    const isFriday = getWeekday() === 'friday';
-
-    // If less than three shifts on friday, add more
-    if (isFriday && count < 3) {
-      return false;
-    }
-
     // Shift exists
-    if (count >= 1) {
+    if (dateCount >= 1) {
       return true;
     }
     return false; // Shift doesn't exist
@@ -200,20 +191,10 @@ class NovaHandler {
   }
 
   async addBillableHours() {
+    const billableHours = 8;
     const hoursField = '#b0p1o388i0i0r1';
     await this.page.waitFor(hoursField);
     await this.page.click(hoursField);
-
-    let billableHours = 8;
-    const isFriday = getWeekday() === 'friday';
-
-    if (isFriday) {
-      if (this.shiftsAddedCount === 0) {
-        billableHours = 4;
-      } else {
-        billableHours = 2;
-      }
-    }
 
     await this.page.waitFor(1000);
     await this.page.type(hoursField, billableHours.toString());
@@ -223,35 +204,11 @@ class NovaHandler {
     const teamMenu = '#b0p1o437i0i0r1';
     await this.page.waitFor(teamMenu);
     await this.page.click(teamMenu);
-
-    const weekday = getWeekday();
-    const isMonday = weekday === 'monday';
-    const isTuesday = weekday === 'tuesday';
-    const isWednesday = weekday === 'wednesday';
-    const isThursday = weekday === 'thursday';
-    const isFriday = weekday === 'friday';
-
     await this.page.waitFor(1500);
+
+    // Select the second element in the dropdown
     await this.page.keyboard.press('ArrowDown');
-
-    if (isMonday || isTuesday) {
-      await this.page.keyboard.press('ArrowDown');
-    }
-
-    if (isWednesday || isThursday) {
-      await this.page.keyboard.press('ArrowDown');
-      await this.page.keyboard.press('ArrowDown');
-    }
-
-    if (isFriday) {
-      if (this.shiftsAddedCount === 1) {
-        await this.page.keyboard.press('ArrowDown');
-      } else if (this.shiftsAddedCount === 2) {
-        await this.page.keyboard.press('ArrowDown');
-        await this.page.keyboard.press('ArrowDown');
-      }
-    }
-
+    await this.page.keyboard.press('ArrowDown');
     await this.page.keyboard.press('Enter');
   }
 
