@@ -1,4 +1,3 @@
-require('dotenv').config();
 const chalk = require('chalk');
 const puppeteer = require('puppeteer');
 const { errorMsg, successMsg, pageLog } = require('./lib/logHelper');
