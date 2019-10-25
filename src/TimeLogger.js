@@ -26,15 +26,15 @@ class TimeLogger {
           },
         ]),
       },
-      {
-        text: chalk.magenta('Nova'),
-        tasks: taskz([
-          {
-            text: 'Adding time report.',
-            task: async () => await novaHandler.run()
-          },
-        ]),
-      },
+      // {
+      //   text: chalk.magenta('Nova'),
+      //   tasks: taskz([
+      //     {
+      //       text: 'Adding time report.',
+      //       task: async () => await novaHandler.run()
+      //     },
+      //   ]),
+      // },
     ], { parallel: !env.IS_DEBUG_MODE });
 
     await tasks.run();

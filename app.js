@@ -1,6 +1,9 @@
+#!/usr/bin/env node
+
 const { TimeLogger } = require('./src/TimeLogger');
 const { Timer } = require('./src/lib/Timer');
 const program = require('commander');
+require('dotenv').config({ path: __dirname + '/.env' });
 const { env } = process;
 
 async function main() {
