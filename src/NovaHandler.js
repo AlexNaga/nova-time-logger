@@ -1,24 +1,23 @@
 const chalk = require('chalk');
 const puppeteer = require('puppeteer');
-const { errorMsg, successMsg, pageLog } = require('./lib/logHelper');
 const { capitalize, getFilePath } = require('./lib/fileHelper');
+const { errorMsg, successMsg, pageLog } = require('./lib/logHelper');
 const { getDate, getMonth } = require('./lib/dateHelper');
+const { getEnv, getEnvBool } = require('./lib/envHelper');
 const { openImage } = require('./lib/openImage');
-
-const { env } = process;
 
 class NovaHandler {
   constructor() {
-    this.url = env.NOVA_URL;
-    this.username = env.NOVA_USERNAME;
-    this.password = env.NOVA_PASSWORD;
-    this.debug = env.IS_DEBUG_MODE === 'true';
-    this.showConsoleLog = env.SHOW_CONSOLE_LOG === 'true';
+    this.url = getEnv('NOVA_URL');
+    this.username = getEnv('NOVA_USERNAME');
+    this.password = getEnv('NOVA_PASSWORD');
+    this.isDebug = getEnvBool('IS_DEBUG_MODE');
+    this.shouldShowPageLog = getEnvBool('SHOW_CONSOLE_LOG');
   }
 
   async init() {
     this.browser = await puppeteer.launch({
-      headless: !this.debug,
+      headless: !this.isDebug,
       defaultViewport: {
         height: 1200,
         width: 1000
@@ -28,7 +27,7 @@ class NovaHandler {
 
     this.page = await this.browser.newPage();
 
-    if (this.showConsoleLog) {
+    if (this.shouldShowPageLog) {
       this.page.on('console', (msg) => pageLog(`(${chalk.magenta('Nova')}) ${msg.text()}`));
     }
   }
@@ -162,7 +161,7 @@ class NovaHandler {
     await this.selectCategory();
     await this.addBillableHours();
     await this.selectTeam();
-    await this.addComment(env.MESSAGE);
+    await this.addComment(getEnv('MESSAGE'));
     await this.saveTimeReport();
   }
 

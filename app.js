@@ -2,6 +2,7 @@
 
 const { TimeLogger } = require('./src/TimeLogger');
 const { Timer } = require('./src/lib/Timer');
+const { getEnvBool } = require('./src/lib/envHelper');
 const program = require('commander');
 require('dotenv').config({ path: __dirname + '/.env' });
 const { env } = process;
@@ -19,7 +20,7 @@ async function main() {
   if (program.message) env.MESSAGE = program.message;
 
   const timer = new Timer();
-  const isDebug = env.IS_DEBUG_MODE;
+  const isDebug = getEnvBool('IS_DEBUG_MODE');
 
   if (isDebug) {
     timer.start();
