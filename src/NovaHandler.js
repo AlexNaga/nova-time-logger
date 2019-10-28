@@ -1,10 +1,10 @@
-const chalk = require('chalk');
-const puppeteer = require('puppeteer');
 const { capitalize, getFilePath } = require('./lib/fileHelper');
 const { errorMsg, successMsg, pageLog } = require('./lib/logHelper');
 const { getDate, getMonth } = require('./lib/dateHelper');
 const { getEnv, getEnvBool } = require('./lib/envHelper');
 const { openImage } = require('./lib/openImage');
+const chalk = require('chalk');
+const puppeteer = require('puppeteer');
 
 class NovaHandler {
   constructor() {

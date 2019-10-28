@@ -1,34 +1,26 @@
+const { BrowserHandler } = require('./BrowserHandler');
+const { errorMsg, successMsg } = require('./lib/logHelper');
+const { getEnv } = require('./lib/envHelper');
 const chalk = require('chalk');
-const puppeteer = require('puppeteer');
-const { errorMsg, successMsg, pageLog } = require('./lib/logHelper');
-const { getEnv, getEnvBool } = require('./lib/envHelper');
-const { getFilePath } = require('./lib/fileHelper');
-const { openImage } = require('./lib/openImage');
 
-class AwHandler {
+class AwHandler extends BrowserHandler {
   constructor() {
-    this.url = getEnv('AW_URL');
-    this.username = getEnv('AW_USERNAME');
-    this.password = getEnv('AW_PASSWORD');
-    this.isDebug = getEnvBool('IS_DEBUG_MODE');
-    this.shiftAlreadyExists = false;
-  }
-
-  async init() {
-    this.browser = await puppeteer.launch({
-      headless: !this.isDebug,
-      defaultViewport: {
+    const url = getEnv('AW_URL');
+    const username = getEnv('AW_USERNAME');
+    const password = getEnv('AW_PASSWORD');
+    const config = {
+      screen: {
+        height: 1800,
+        width: 1200
+      },
+      screenshot: {
         height: 1800,
         width: 1200
       }
-      // slowMo: 250, // Time in ms
-    });
+    };
 
-    this.page = await this.browser.newPage();
-
-    if (this.showConsoleLog) {
-      this.page.on('console', (msg) => pageLog(`(${chalk.cyan('AW')}) ${msg.text()}`));
-    }
+    super(url, username, password, config);
+    this.shiftAlreadyExists = false;
   }
 
   async run() {
@@ -115,17 +107,6 @@ class AwHandler {
         ...screenshotSize
       },
     });
-  }
-
-  async closeBrowser() {
-    await this.browser.close();
-  }
-
-  async exit() {
-    const filePath = getFilePath('aw');
-    await this.takeScreenshot(filePath);
-    await openImage(filePath);
-    await this.closeBrowser();
   }
 }
 
