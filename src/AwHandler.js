@@ -1,23 +1,22 @@
 const chalk = require('chalk');
 const puppeteer = require('puppeteer');
 const { errorMsg, successMsg, pageLog } = require('./lib/logHelper');
+const { getEnv, getEnvBool } = require('./lib/envHelper');
 const { getFilePath } = require('./lib/fileHelper');
 const { openImage } = require('./lib/openImage');
 
-const { env } = process;
-
 class AwHandler {
   constructor() {
-    this.url = env.AW_URL;
-    this.username = env.AW_USERNAME;
-    this.password = env.AW_PASSWORD;
-    this.debug = env.IS_DEBUG_MODE === 'true';
+    this.url = getEnv('AW_URL');
+    this.username = getEnv('AW_USERNAME');
+    this.password = getEnv('AW_PASSWORD');
+    this.isDebug = getEnvBool('IS_DEBUG_MODE');
     this.shiftAlreadyExists = false;
   }
 
   async init() {
     this.browser = await puppeteer.launch({
-      headless: !this.debug,
+      headless: !this.isDebug,
       defaultViewport: {
         height: 1800,
         width: 1200
