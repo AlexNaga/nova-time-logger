@@ -1,11 +1,11 @@
 /* eslint-disable class-methods-use-this */
-const chalk = require('chalk');
-const taskz = require('taskz');
 const { AwHandler } = require('./AwHandler');
-const { NovaHandler } = require('./NovaHandler');
+const { getEnvBool } = require('./lib/envHelper');
 const { infoMsg } = require('./lib/logHelper');
 const { isWeekend } = require('./lib/dateHelper');
-const { getEnvBool } = require('./lib/envHelper');
+const { NovaHandler } = require('./NovaHandler');
+const chalk = require('chalk');
+const taskz = require('taskz');
 
 class TimeLogger {
   async run() {
