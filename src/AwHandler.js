@@ -12,10 +12,6 @@ class AwHandler extends BrowserHandler {
       screen: {
         height: 1800,
         width: 1200
-      },
-      screenshot: {
-        height: 1800,
-        width: 1200
       }
     };
 
