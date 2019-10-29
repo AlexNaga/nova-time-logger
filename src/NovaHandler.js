@@ -1,35 +1,16 @@
-const { capitalize, getFilePath } = require('./lib/fileHelper');
-const { errorMsg, successMsg, pageLog } = require('./lib/logHelper');
+const { BrowserHandler } = require('./BrowserHandler');
+const { capitalize } = require('./lib/fileHelper');
+const { errorMsg, successMsg } = require('./lib/logHelper');
 const { getDate, getMonth } = require('./lib/dateHelper');
-const { getEnv, getEnvBool } = require('./lib/envHelper');
-const { openImage } = require('./lib/openImage');
+const { getEnv } = require('./lib/envHelper');
 const chalk = require('chalk');
-const puppeteer = require('puppeteer');
 
-class NovaHandler {
+class NovaHandler extends BrowserHandler {
   constructor() {
-    this.url = getEnv('NOVA_URL');
-    this.username = getEnv('NOVA_USERNAME');
-    this.password = getEnv('NOVA_PASSWORD');
-    this.isDebug = getEnvBool('IS_DEBUG_MODE');
-    this.shouldShowPageLog = getEnvBool('SHOW_CONSOLE_LOG');
-  }
-
-  async init() {
-    this.browser = await puppeteer.launch({
-      headless: !this.isDebug,
-      defaultViewport: {
-        height: 1200,
-        width: 1000
-      }
-      // slowMo: 250, // Time in ms
-    });
-
-    this.page = await this.browser.newPage();
-
-    if (this.shouldShowPageLog) {
-      this.page.on('console', (msg) => pageLog(`(${chalk.magenta('Nova')}) ${msg.text()}`));
-    }
+    const url = getEnv('NOVA_URL');
+    const username = getEnv('NOVA_USERNAME');
+    const password = getEnv('NOVA_PASSWORD');
+    super(url, username, password);
   }
 
   async run() {
@@ -91,17 +72,13 @@ class NovaHandler {
     const pwField = '#login_pwd';
     const loginBtn = '#login_nonguest';
 
-    await this.waitForLoginPage();
+    await this.waitForLoginPage(userField, pwField, loginBtn);
     await this.page.type(userField, user);
     await this.page.type(pwField, pw);
     await this.page.click(loginBtn);
   }
 
-  async waitForLoginPage() {
-    const userField = '#login_name';
-    const pwField = '#login_pwd';
-    const loginBtn = '#login_nonguest';
-
+  async waitForLoginPage(userField, pwField, loginBtn) {
     try {
       await this.page.waitFor(userField);
       await this.page.waitFor(pwField);
@@ -304,17 +281,6 @@ class NovaHandler {
         ...screenshotSize
       },
     });
-  }
-
-  async closeBrowser() {
-    await this.browser.close();
-  }
-
-  async exit() {
-    const filePath = getFilePath('nova');
-    await this.takeScreenshot(filePath);
-    await openImage(filePath);
-    await this.closeBrowser();
   }
 }
 

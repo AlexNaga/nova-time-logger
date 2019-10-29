@@ -1,4 +1,4 @@
-const { errorMsg, successMsg, pageLog } = require('./lib/logHelper');
+const { pageLog } = require('./lib/logHelper');
 const { getEnvBool } = require('./lib/envHelper');
 const { getFilePath } = require('./lib/fileHelper');
 const { openImage } = require('./lib/openImage');
@@ -10,7 +10,7 @@ class BrowserHandler {
     this.url = url;
     this.username = username;
     this.password = password;
-    this.config = config;
+    this.config = config || { screen: {} };
     this.isDebug = getEnvBool('IS_DEBUG_MODE');
   }
 
@@ -19,7 +19,7 @@ class BrowserHandler {
       headless: !this.isDebug,
       defaultViewport: {
         height: this.config.screen.height || 1200,
-        width: this.config.screen.height || 1000
+        width: this.config.screen.width || 1000
       }
       // slowMo: 250, // Time in ms
     });
@@ -32,8 +32,7 @@ class BrowserHandler {
     }
   }
 
-  async takeScreenshot(filePath) {
-  }
+  async takeScreenshot(filePath) { }
 
   async closeBrowser() {
     await this.browser.close();
