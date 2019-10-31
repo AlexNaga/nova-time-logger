@@ -7,10 +7,14 @@ const puppeteer = require('puppeteer');
 
 class BrowserHandler {
   constructor(url, username, password, config) {
+    if (!config.screen) {
+      config.screen = {};
+    }
+
     this.url = url;
     this.username = username;
     this.password = password;
-    this.config = config || { screen: {} };
+    this.config = config;
     this.isDebug = getEnvBool('IS_DEBUG_MODE');
   }
 
@@ -39,7 +43,7 @@ class BrowserHandler {
   }
 
   async exit() {
-    const filePath = getFilePath('aw');
+    const filePath = getFilePath(this.config.site);
     await this.takeScreenshot(filePath);
     await openImage(filePath);
     await this.closeBrowser();
