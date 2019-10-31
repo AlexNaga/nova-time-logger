@@ -10,7 +10,8 @@ class NovaHandler extends BrowserHandler {
     const url = getEnv('NOVA_URL');
     const username = getEnv('NOVA_USERNAME');
     const password = getEnv('NOVA_PASSWORD');
-    super(url, username, password);
+    const config = { site: 'nova' };
+    super(url, username, password, config);
   }
 
   async run() {

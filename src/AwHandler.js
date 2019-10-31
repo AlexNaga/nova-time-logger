@@ -9,6 +9,7 @@ class AwHandler extends BrowserHandler {
     const username = getEnv('AW_USERNAME');
     const password = getEnv('AW_PASSWORD');
     const config = {
+      site: 'aw',
       screen: {
         height: 1800,
         width: 1200
