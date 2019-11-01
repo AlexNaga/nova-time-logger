@@ -11,6 +11,12 @@ const getMonth = () => {
   return month;
 };
 
+const getLastMonth = () => {
+  const monthAsNr = (moment().month()) - 1;
+  const month = moment.months(monthAsNr).toLowerCase();
+  return month;
+};
+
 const getWeekday = () => {
   const weekdayAsNr = moment().weekday();
   const weekday = moment.weekdays(weekdayAsNr).toLowerCase();
@@ -29,6 +35,7 @@ const isWeekend = () => {
 module.exports = {
   getDate,
   getMonth,
+  getLastMonth,
   getWeekday,
   isWeekend,
 };
