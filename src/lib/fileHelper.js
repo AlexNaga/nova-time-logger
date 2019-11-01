@@ -8,6 +8,7 @@ const getFileName = () => {
 };
 
 const getFilePath = (dirName = 'misc') => {
+  dirName = dirName.toLowerCase();
   const fileName = getFileName();
   const filePath = `${__dirname}/../../output/${dirName}/${fileName}`;
   return filePath;

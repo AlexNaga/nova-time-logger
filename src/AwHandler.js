@@ -9,7 +9,7 @@ class AwHandler extends BrowserHandler {
     const username = getEnv('AW_USERNAME');
     const password = getEnv('AW_PASSWORD');
     const config = {
-      site: 'aw',
+      site: 'AW',
       screen: {
         height: 1800,
         width: 1200
@@ -38,10 +38,10 @@ class AwHandler extends BrowserHandler {
 
     if (this.shiftAlreadyExists) {
       await this.exit();
-      errorMsg(`Shift already exists in ${chalk.cyan('AW')}.`);
+      errorMsg(`Shift already exists in ${chalk.cyan(this.config.site)}.`);
     } else {
       await this.page.waitFor(200);
-      successMsg(`Added shift to ${chalk.cyan('AW')}.`);
+      successMsg(`Added shift to ${chalk.cyan(this.config.site)}.`);
     }
 
     await this.exit();

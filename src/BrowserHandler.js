@@ -32,7 +32,7 @@ class BrowserHandler {
     const shouldShowPageLog = getEnvBool('SHOW_CONSOLE_LOG');
 
     if (shouldShowPageLog) {
-      this.page.on('console', (msg) => pageLog(`(${chalk.magenta('Nova')}) ${msg.text()}`));
+      this.page.on('console', (msg) => pageLog(`(${chalk.magenta(this.config.site)}) ${msg.text()}`));
     }
   }
 

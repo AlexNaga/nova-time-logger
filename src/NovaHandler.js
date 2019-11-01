@@ -1,7 +1,7 @@
 const { BrowserHandler } = require('./BrowserHandler');
 const { capitalize } = require('./lib/fileHelper');
 const { errorMsg, successMsg } = require('./lib/logHelper');
-const { getDate, getMonth } = require('./lib/dateHelper');
+const { getDate, getMonth, getLastMonth } = require('./lib/dateHelper');
 const { getEnv } = require('./lib/envHelper');
 const chalk = require('chalk');
 
@@ -10,7 +10,7 @@ class NovaHandler extends BrowserHandler {
     const url = getEnv('NOVA_URL');
     const username = getEnv('NOVA_USERNAME');
     const password = getEnv('NOVA_PASSWORD');
-    const config = { site: 'nova' };
+    const config = { site: 'Nova' };
     super(url, username, password, config);
   }
 
@@ -27,7 +27,7 @@ class NovaHandler extends BrowserHandler {
 
     if (shiftAlreadyExists) {
       await this.exit();
-      errorMsg(`Shift already exists in ${chalk.magenta('Nova')}.`);
+      errorMsg(`Shift already exists in ${chalk.magenta(this.config.site)}.`);
     }
 
     while (shiftAlreadyExists === false) {
@@ -36,7 +36,7 @@ class NovaHandler extends BrowserHandler {
       shiftAlreadyExists = await this.isShiftAlreadyAdded();
     }
 
-    successMsg(`Added shift to ${chalk.magenta('Nova')}.`);
+    successMsg(`Added shift to ${chalk.magenta(this.config.site)}.`);
     await this.exit();
   }
 
@@ -58,7 +58,7 @@ class NovaHandler extends BrowserHandler {
 
     if (dateCount < 0) {
       await this.exit();
-      errorMsg(`The script doesn't match todays date on ${chalk.magenta('Nova')}.`);
+      errorMsg(`The script doesn't match todays date on ${chalk.magenta(this.config.site)}.`);
     }
 
     // Shift exists
@@ -87,7 +87,7 @@ class NovaHandler extends BrowserHandler {
       await this.hasPageTxt('sign in');
     } catch (error) {
       await this.exit();
-      errorMsg(`Can\'t open login page on ${chalk.magenta('Nova')}.`);
+      errorMsg(`Can\'t open login page on ${chalk.magenta(this.config.site)}.`);
     }
   }
 
@@ -97,7 +97,7 @@ class NovaHandler extends BrowserHandler {
       await this.hasPageTxt(dateNow);
     } catch (error) {
       await this.exit();
-      errorMsg(`The script doesn't match todays date on ${chalk.magenta('Nova')}.`);
+      errorMsg(`The script doesn't match todays date on ${chalk.magenta(this.config.site)}.`);
     }
   }
 
@@ -110,11 +110,12 @@ class NovaHandler extends BrowserHandler {
 
   async waitForTimeReportPage() {
     try {
-      const monthNow = getMonth(); // This only exists on time report page
-      await this.hasPageTxt(monthNow);
+      const lastMonth = getLastMonth(); // This only exists on time report page
+      await this.hasPageTxt(lastMonth);
+
     } catch (error) {
       await this.exit();
-      errorMsg(`Can\'t open time reports page on ${chalk.magenta('Nova')}.`);
+      errorMsg(`Can\'t open time reports page on ${chalk.magenta(this.config.site)}.`);
     }
   }
 
@@ -263,7 +264,7 @@ class NovaHandler extends BrowserHandler {
       return await this.getElemTopPosition(elem);
     } catch (error) {
       await this.exit();
-      errorMsg(`Can't get screenshot height on ${chalk.magenta('Nova')}.`);
+      errorMsg(`Can't get screenshot height on ${chalk.magenta(this.config.site)}.`);
     }
   }
 
