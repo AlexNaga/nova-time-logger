@@ -87,7 +87,7 @@ class NovaHandler extends BrowserHandler {
       await this.hasPageTxt('sign in');
     } catch (error) {
       await this.exit();
-      errorMsg(`Can\'t open login page on ${chalk.magenta(this.config.site)}.`);
+      errorMsg(`Can't open login page on ${chalk.magenta(this.config.site)}.`);
     }
   }
 
@@ -115,7 +115,7 @@ class NovaHandler extends BrowserHandler {
 
     } catch (error) {
       await this.exit();
-      errorMsg(`Can\'t open time reports page on ${chalk.magenta(this.config.site)}.`);
+      errorMsg(`Can't open time reports page on ${chalk.magenta(this.config.site)}.`);
     }
   }
 
