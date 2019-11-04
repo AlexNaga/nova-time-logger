@@ -127,13 +127,12 @@ class NovaHandler extends BrowserHandler {
   }
 
   async addShift() {
-    const addShiftBtn = '#b0p6o328i0i0r1';
+    const addShiftBtn = '#b0p6o368i0i0r1';
     await this.page.waitFor(addShiftBtn);
     await this.page.click(addShiftBtn);
 
-    const projectSelection = '#b0p2o1181i0i0r1';
-    await this.page.waitFor(projectSelection);
-    await this.page.click(projectSelection);
+    const projectSelectionPage = '#b0p2o1181i0i0r1';
+    await this.page.waitFor(projectSelectionPage);
 
     await this.clickWantedProject();
     await this.clickCreateReport();
@@ -145,15 +144,13 @@ class NovaHandler extends BrowserHandler {
   }
 
   async clickWantedProject() {
-    const projectMenu = '.menu_option';
-    await this.page.waitFor(projectMenu);
-
-    const searchTxt = 'SO42940';
-    this.selectMenuItemByTxt(projectMenu, searchTxt);
+    const projectId = '#b0p2o1187i0i1r1';
+    await this.page.waitFor(projectId);
+    await this.page.click(projectId);
   }
 
   async clickCreateReport() {
-    const createReportBtn = '#b0p2o1208i0i0r1';
+    const createReportBtn = '#b0p3o1211i0i0r1';
     await this.page.waitFor(createReportBtn);
     await this.page.click(createReportBtn);
   }
@@ -199,24 +196,9 @@ class NovaHandler extends BrowserHandler {
   }
 
   async saveTimeReport() {
-    const saveTimeReportBtn = '#b0p2o431i0i0r1';
+    const saveTimeReportBtn = '#b0p2o442i0i0r1';
     await this.page.waitFor(saveTimeReportBtn);
     await this.page.click(saveTimeReportBtn);
-  }
-
-  // Loop through the menu items and find a match
-  async selectMenuItemByTxt(menuId, searchTxt) {
-    const menuItems = await this.page.$$(menuId);
-
-    // Loop over the menu items and click the one we want
-    for (const menuItem of menuItems) {
-      const label = await this.page.evaluate((elem) => elem.textContent.toLowerCase(), menuItem);
-      const isWantedItem = label.includes(searchTxt.toLowerCase());
-
-      if (isWantedItem) {
-        await this.clickBtn(menuItem);
-      }
-    }
   }
 
   async clickBtn(elem) {
