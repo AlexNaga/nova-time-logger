@@ -41,11 +41,10 @@ class NovaHandler extends BrowserHandler {
   }
 
   async isShiftAlreadyAdded() {
-    const allTxtContent = await this.page.$$('.text');
     const dateNow = getDate('/');
     let dateCount = 0;
 
-    for (const elem of allTxtContent) {
+    for (const elem of this.getPageTxt()) {
       const label = await this.page.evaluate((e) => e.textContent.toLowerCase(), elem);
       const dateExists = label.includes(dateNow);
 
@@ -54,18 +53,16 @@ class NovaHandler extends BrowserHandler {
       }
     }
 
-    dateCount -= 1; // Since the date is always visible on the site
+    dateCount -= 1; // Since todays date is always visible on the site
+    const isDateMismatch = dateCount < 0;
 
-    if (dateCount < 0) {
+    if (isDateMismatch) {
       await this.exit();
       errorMsg(`The script doesn't match todays date on ${chalk.magenta(this.config.site)}.`);
     }
 
-    // Shift exists
-    if (dateCount >= 1) {
-      return true;
-    }
-    return false; // Shift doesn't exist
+    const doesShiftExist = dateCount > 0;
+    return doesShiftExist ? true : false;
   }
 
   async login(user, pw) {
@@ -206,6 +203,10 @@ class NovaHandler extends BrowserHandler {
     await this.page.evaluate((e) => {
       clickBtn(e);
     }, elem);
+  }
+
+  async getPageTxt() {
+    return await this.page.$$('.text');
   }
 
   // Add helper functions to the DOM
