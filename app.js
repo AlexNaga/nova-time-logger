@@ -3,21 +3,21 @@
 const { TimeLogger } = require('./src/TimeLogger');
 const { Timer } = require('./src/lib/Timer');
 const { getEnvBool } = require('./src/lib/envHelper');
-const program = require('commander');
+const app = require('commander');
 require('dotenv').config({ path: __dirname + '/.env' });
 const { env } = process;
 
 async function main() {
-  program
+  app
     .usage('[options] <command>')
     .option('-d, --debug', 'Show browser')
     .option('-l, --logs', 'Output page logs')
     .option('-m, --message <comment>', 'Activities done during the time period')
     .parse(process.argv);
 
-  if (program.debug === true) env.IS_DEBUG_MODE = true;
-  if (program.logs === true) env.SHOW_CONSOLE_LOG = true;
-  if (program.message) env.MESSAGE = program.message;
+  if (app.debug === true) env.IS_DEBUG_MODE = true;
+  if (app.logs === true) env.SHOW_CONSOLE_LOG = true;
+  if (app.message) env.MESSAGE = app.message;
 
   const timer = new Timer();
   const isDebug = getEnvBool('IS_DEBUG_MODE');
