@@ -127,7 +127,7 @@ class NovaHandler extends BrowserHandler {
     await this.clickCreateReport();
     await this.selectCategory();
     await this.addBillableHours();
-    await this.selectTeam();
+    await this.selectTeamMember();
     await this.addComment(getEnv('MESSAGE'));
     await this.saveTimeReport();
   }
@@ -145,32 +145,28 @@ class NovaHandler extends BrowserHandler {
   }
 
   async selectCategory() {
-    const categoryMenu = '#b0p1o371i0i0r1';
-    await this.page.waitFor(categoryMenu);
-    await this.page.click(categoryMenu);
-
     await this.page.waitFor(1000);
+    await this.page.keyboard.press('ArrowDown');
+    await this.page.waitFor(500);
     await this.page.keyboard.press('ArrowDown');
     await this.page.keyboard.press('Enter');
   }
 
   async addBillableHours() {
     const billableHours = 8;
-    const hoursField = '#b0p1o388i0i0r1';
-    await this.page.waitFor(hoursField);
-    await this.page.click(hoursField);
-
+    await this.page.keyboard.press('Tab');
     await this.page.waitFor(1000);
-    await this.page.type(hoursField, billableHours.toString());
+    await this.page.keyboard.type(billableHours.toString());
   }
 
-  async selectTeam() {
-    const teamMenu = '#b0p1o437i0i0r1';
-    await this.page.waitFor(teamMenu);
-    await this.page.click(teamMenu);
+  async selectTeamMember() {
+    await this.page.keyboard.press('Tab');
+    await this.page.waitFor(1000);
+    await this.page.keyboard.press('ArrowDown');
     await this.page.waitFor(1500);
 
-    // Select the second element in the dropdown
+    // Select the third element in the dropdown
+    await this.page.keyboard.press('ArrowDown');
     await this.page.keyboard.press('ArrowDown');
     await this.page.keyboard.press('ArrowDown');
     await this.page.keyboard.press('Enter');
