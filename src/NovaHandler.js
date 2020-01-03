@@ -42,16 +42,8 @@ class NovaHandler extends BrowserHandler {
 
   async isShiftAlreadyAdded() {
     const dateNow = getDate('/');
-    let dateCount = 0;
-
-    for (const elem of this.getPageTxt()) {
-      const label = await this.page.evaluate((e) => e.textContent.toLowerCase(), elem);
-      const dateExists = label.includes(dateNow);
-
-      if (dateExists) {
-        dateCount += 1;
-      }
-    }
+    const pageTxt = await this.getPageTxt();
+    let dateCount = (pageTxt.match(new RegExp(dateNow, 'g')) || []).length; // Count matches on page
 
     dateCount -= 1; // Since todays date is always visible on the site
     const isDateMismatch = dateCount < 0;
@@ -206,7 +198,9 @@ class NovaHandler extends BrowserHandler {
   }
 
   async getPageTxt() {
-    return await this.page.$$('.text');
+    let pageTxt = await this.page.$eval('*', el => el.innerText);
+    pageTxt = pageTxt.replace(/\s\s+/g, ' '); // Remove whitespace to make it nice and clean
+    return pageTxt;
   }
 
   // Add helper functions to the DOM
