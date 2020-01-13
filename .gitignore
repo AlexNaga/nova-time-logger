@@ -4,9 +4,15 @@ node_modules
 # VS Code stuff
 .vscode
 
-# Output images
-output/*.png
-output/*/*.png
+# Screenshots
+screenshots/*.png
+screenshots/*/*.png
 
 # Secrets
 .env
+
+# Build
+build/
+
+# Dist
+dist/
