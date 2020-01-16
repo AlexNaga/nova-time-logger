@@ -1,24 +1,17 @@
 const chalk = require('chalk');
 
-const errorMsg = (msg) => {
+export const errorMsg = (msg: string) => {
   throw new Error(msg);
 };
 
-const infoMsg = (msg) => {
+export const infoMsg = (msg: string) => {
   console.log(chalk.blue.bold('Info: ') + msg);
 };
 
-const successMsg = (msg) => {
+export const successMsg = (msg: string) => {
   console.log(chalk.green.bold('Success: ') + msg);
 };
 
-const pageLog = (msg) => {
+export const pageLog = (msg: string) => {
   console.log(chalk.yellow.bold('Page log: ') + msg);
-};
-
-module.exports = {
-  errorMsg,
-  infoMsg,
-  successMsg,
-  pageLog,
 };

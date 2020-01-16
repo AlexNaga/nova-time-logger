@@ -1,10 +1,8 @@
-/* eslint-disable class-methods-use-this */
-const { getEnvBool } = require('./lib/envHelper');
-const { infoMsg } = require('./lib/logHelper');
-const { isWeekend } = require('./lib/dateHelper');
-const { NovaHandler } = require('./NovaHandler');
-const chalk = require('chalk');
-const taskz = require('taskz');
+import { infoMsg } from './lib/logHelper';
+import { isWeekend } from './lib/dateHelper';
+import { NovaHandler } from './NovaHandler';
+import chalk from 'chalk';
+import taskz from 'taskz';
 
 class TimeLogger {
   async run() {
@@ -13,7 +11,6 @@ class TimeLogger {
     }
 
     const novaHandler = new NovaHandler();
-
     const tasks = taskz([
       {
         text: chalk.magenta('Nova'),
@@ -24,10 +21,10 @@ class TimeLogger {
           },
         ]),
       },
-    ], { parallel: !getEnvBool('IS_DEBUG_MODE') });
+    ]);
 
     await tasks.run();
   }
 }
 
-module.exports = { TimeLogger };
+export { TimeLogger };

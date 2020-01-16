@@ -1,7 +1,7 @@
 const open = require('open');
 const { getSystemType } = require('./fileHelper');
 
-const openImage = async (filePath) => {
+export const openImage = async (filePath: string) => {
   const systemType = getSystemType();
   const isMacOs = systemType === 'darwin';
 
@@ -11,5 +11,3 @@ const openImage = async (filePath) => {
     await open(filePath);
   }
 };
-
-module.exports = { openImage };

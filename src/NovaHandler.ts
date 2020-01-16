@@ -1,17 +1,33 @@
-const { BrowserHandler } = require('./BrowserHandler');
-const { capitalize } = require('./lib/fileHelper');
-const { errorMsg, successMsg } = require('./lib/logHelper');
-const { getDate, getMonth, getLastMonth } = require('./lib/dateHelper');
-const { getEnv } = require('./lib/envHelper');
-const chalk = require('chalk');
+import { BrowserHandler } from './BrowserHandler';
+import { capitalize } from './lib/fileHelper';
+import { errorMsg, successMsg } from './lib/logHelper';
+import { getDate, getMonth, getLastMonth } from './lib/dateHelper';
+import { Config } from 'types/config';
+import chalk from 'chalk';
+const env = process.env;
+
+// This is needed to extend `window`
+declare global {
+  interface Window {
+    clickBtn: any;
+  }
+}
+
+declare let clickBtn: any; // Ugly way of bypassing TS error
 
 class NovaHandler extends BrowserHandler {
   constructor() {
-    const url = getEnv('NOVA_URL');
-    const username = getEnv('NOVA_USERNAME');
-    const password = getEnv('NOVA_PASSWORD');
-    const config = { site: 'Nova' };
-    super(url, username, password, config);
+    if (!env.NOVA_URL || !env.NOVA_USERNAME || !env.NOVA_PASSWORD) {
+      throw new Error('Missing either URL, username or password in .env');
+    }
+
+    const config: Config = {
+      site: 'Nova',
+      url: env.NOVA_URL,
+      username: env.NOVA_USERNAME,
+      password: env.NOVA_PASSWORD,
+    };
+    super(config);
   }
 
   async run() {
@@ -57,7 +73,7 @@ class NovaHandler extends BrowserHandler {
     return doesShiftExist ? true : false;
   }
 
-  async login(user, pw) {
+  async login(user: string, pw: string) {
     const userField = '#login_name';
     const pwField = '#login_pwd';
     const loginBtn = '#login_nonguest';
@@ -68,7 +84,7 @@ class NovaHandler extends BrowserHandler {
     await this.page.click(loginBtn);
   }
 
-  async waitForLoginPage(userField, pwField, loginBtn) {
+  async waitForLoginPage(userField: string, pwField: string, loginBtn: string) {
     try {
       await this.page.waitFor(userField);
       await this.page.waitFor(pwField);
@@ -108,9 +124,15 @@ class NovaHandler extends BrowserHandler {
     }
   }
 
-  async hasPageTxt(searchTxt) {
-    return await this.page.waitForFunction(searchTxt => {
-      const txtOnPage = document.querySelector('body').innerText.toLowerCase();
+  async hasPageTxt(searchTxt: string) {
+    return await this.page.waitForFunction((searchTxt: string) => {
+      const body = document.querySelector('body');
+      let txtOnPage = '';
+
+      if (body) {
+        txtOnPage = body.innerText.toLowerCase();
+      }
+
       return txtOnPage.includes(searchTxt);
     }, {}, searchTxt);
   }
@@ -128,7 +150,7 @@ class NovaHandler extends BrowserHandler {
     await this.selectCategory();
     await this.addBillableHours();
     await this.selectTeamMember();
-    await this.addComment(getEnv('MESSAGE'));
+    await this.addComment(env.MESSAGE);
     await this.saveTimeReport();
   }
 
@@ -186,15 +208,15 @@ class NovaHandler extends BrowserHandler {
     await this.page.click(saveTimeReportBtn);
   }
 
-  async clickBtn(elem) {
+  async clickBtn(elem: any) {
     await this.addScripts();
-    await this.page.evaluate((e) => {
+    await this.page.evaluate((e: any) => {
       clickBtn(e);
     }, elem);
   }
 
   async getPageTxt() {
-    let pageTxt = await this.page.$eval('*', el => el.innerText);
+    let pageTxt = await this.page.$eval('*', (e: any) => e.innerText);
     pageTxt = pageTxt.replace(/\s\s+/g, ' '); // Remove whitespace to make it nice and clean
     return pageTxt;
   }
@@ -202,7 +224,7 @@ class NovaHandler extends BrowserHandler {
   // Add helper functions to the DOM
   async addScripts() {
     await this.page.evaluate(() => {
-      const clickBtn = (btn) => {
+      const clickBtn = (btn: any) => {
         const mouseDown = new MouseEvent('mousedown', {
           view: window,
           bubbles: true,
@@ -223,9 +245,9 @@ class NovaHandler extends BrowserHandler {
     });
   }
 
-  async getElemTopPosition(elem) {
-    return await this.page.evaluate(elem => {
-      const rect = elem.getBoundingClientRect();
+  async getElemTopPosition(elem: any) {
+    return await this.page.evaluate((e: any) => {
+      const rect = e.getBoundingClientRect();
       return rect.top + window.scrollY;
     }, elem);
   }
@@ -233,7 +255,7 @@ class NovaHandler extends BrowserHandler {
   async getScreenshotHeight() {
     try {
       const monthNow = capitalize(getMonth());
-      const elem = (await this.page.$x(`//*[contains(text(), "${monthNow}")]`))[1];
+      const elem: any = (await this.page.$x(`//*[contains(text(), "${monthNow}")]`))[1];
       return await this.getElemTopPosition(elem);
     } catch (error) {
       await this.exit();
@@ -241,7 +263,7 @@ class NovaHandler extends BrowserHandler {
     }
   }
 
-  async takeScreenshot(filePath) {
+  async takeScreenshot(filePath: string) {
     const screenshotHeight = await this.getScreenshotHeight();
     const screenshotSize = {
       height: screenshotHeight,
@@ -259,4 +281,4 @@ class NovaHandler extends BrowserHandler {
   }
 }
 
-module.exports = { NovaHandler };
+export { NovaHandler };
