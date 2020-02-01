@@ -1,7 +1,7 @@
 import app from 'commander'
-import { timeLogger } from './TimeLogger';
 import { getEnvBool } from './lib/envHelper';
-// import { Timer } from './lib/Timer';
+import { timeLogger } from './TimeLogger';
+import { timer } from './lib/Timer';
 const env = process.env;
 
 async function main() {
@@ -16,21 +16,17 @@ async function main() {
   // if (app.logs === true) env.SHOW_CONSOLE_LOG = 'true';
   // if (app.message) env.MESSAGE = app.message;
 
-  // const timer = new Timer();
-  // const isDebug = getEnvBool('IS_DEBUG');
+  const isDebug = getEnvBool('IS_DEBUG');
 
-  // if (isDebug) {
-  //   console.time('timeLog')
-  //   // timer.start();
-  // }
+  if (isDebug) {
+    timer.start();
+  }
 
   await timeLogger.run();
-  
 
-  // if (isDebug) {
-  //   console.time('timeLog')
-  //   // timer.stop();
-  // }
+  if (isDebug) {
+    timer.stop();
+  }
 }
 
 main();
