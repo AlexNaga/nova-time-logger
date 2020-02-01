@@ -1,6 +1,8 @@
+import { env } from './lib/setup';
 import { infoMsg } from './lib/logHelper';
 import { isWeekend } from './lib/dateHelper';
 import { NovaHandler } from './NovaHandler';
+import { timer } from './lib/Timer';
 import chalk from 'chalk';
 import taskz from 'taskz';
 
@@ -23,7 +25,11 @@ class TimeLogger {
       },
     ]);
 
+    if (env.IS_DEBUG) timer.start();
+
     await tasks.run();
+
+    if (env.IS_DEBUG) timer.stop();
   }
 }
 
