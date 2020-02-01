@@ -1,5 +1,5 @@
 import app from 'commander'
-import { TimeLogger } from './TimeLogger';
+import { timeLogger } from './TimeLogger';
 import { getEnvBool } from './lib/envHelper';
 // import { Timer } from './lib/Timer';
 const env = process.env;
@@ -24,8 +24,8 @@ async function main() {
   //   // timer.start();
   // }
 
-  const timeLogger = new TimeLogger();
   await timeLogger.run();
+  
 
   // if (isDebug) {
   //   console.time('timeLog')

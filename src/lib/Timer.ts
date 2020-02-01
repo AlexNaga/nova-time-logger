@@ -1,22 +1,25 @@
-// const { performance } = require('perf_hooks');
-// const chalk = require('chalk');
+import { performance } from 'perf_hooks';
+import chalk from 'chalk';
 
-// class Timer {
-//   constructor() {
-//     this.startTime = 0;
-//     this.endTime = 0;
-//   }
+class Timer {
+  startTime: number;
+  endTime: number;
 
-//   start() {
-//     this.startTime = performance.now();
-//   }
+  constructor() {
+    this.startTime = 0;
+    this.endTime = 0;
+  }
 
-//   stop() {
-//     const endTime = performance.now();
-//     const runtimeInMs = (endTime - this.startTime) / 1000;
-//     const runtimeInSec = runtimeInMs.toFixed(2);
-//     console.log(`\nRuntime was: ${chalk.underline(runtimeInSec)}s`);
-//   }
-// }
+  start() {
+    this.startTime = performance.now();
+  }
 
-// module.exports = { Timer };
+  stop() {
+    const endTime = performance.now();
+    const runtimeInMs = (endTime - this.startTime) / 1000;
+    const runtimeInSec = runtimeInMs.toFixed(2);
+    console.log(`\nRuntime was: ${chalk.underline(runtimeInSec)}s`);
+  }
+}
+
+module.exports = { Timer };

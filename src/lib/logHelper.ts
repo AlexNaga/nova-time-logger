@@ -1,4 +1,4 @@
-const chalk = require('chalk');
+import chalk from 'chalk';
 
 export const errorMsg = (msg: string) => {
   throw new Error(msg);

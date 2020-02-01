@@ -1,10 +1,10 @@
-import { getFilePath } from './lib/fileHelper';
-import { pageLog } from './lib/logHelper';
 import { getEnvBool } from './lib/envHelper';
+import { getFilePath } from './lib/fileHelper';
 import { openImage } from './lib/openImage';
+import { pageLog } from './lib/logHelper';
+import { Config } from './types/config';
 import chalk from 'chalk';
 import puppeteer from 'puppeteer';
-import { Config } from 'types/config';
 
 class BrowserHandler {
   url: string;

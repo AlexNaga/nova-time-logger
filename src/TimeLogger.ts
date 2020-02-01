@@ -6,9 +6,9 @@ import taskz from 'taskz';
 
 class TimeLogger {
   async run() {
-    if (isWeekend()) {
-      return infoMsg('Can\'t add shifts on weekends.');
-    }
+    // if (isWeekend()) {
+    //   return infoMsg('Can\'t add shifts on weekends.');
+    // }
 
     const novaHandler = new NovaHandler();
     const tasks = taskz([
@@ -27,4 +27,5 @@ class TimeLogger {
   }
 }
 
-export { TimeLogger };
+const timeLogger = new TimeLogger();
+export { timeLogger };

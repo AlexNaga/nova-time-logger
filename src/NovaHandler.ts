@@ -2,7 +2,7 @@ import { BrowserHandler } from './BrowserHandler';
 import { capitalize } from './lib/fileHelper';
 import { errorMsg, successMsg } from './lib/logHelper';
 import { getDate, getMonth, getLastMonth } from './lib/dateHelper';
-import { Config } from 'types/config';
+import { Config } from './types/config';
 import chalk from 'chalk';
 const env = process.env;
 
