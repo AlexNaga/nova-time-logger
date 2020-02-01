@@ -6,19 +6,10 @@ import { Config } from './types/config';
 import chalk from 'chalk';
 const env = process.env;
 
-// This is needed to extend `window`
-declare global {
-  interface Window {
-    clickBtn: any;
-  }
-}
-
-declare let clickBtn: any; // Ugly way of bypassing TS error
-
 class NovaHandler extends BrowserHandler {
   constructor() {
-    if (!env.NOVA_URL || !env.NOVA_USERNAME || !env.NOVA_PASSWORD) {
-      throw new Error('Missing either URL, username or password in .env');
+    if (!env.NOVA_URL || !env.NOVA_USERNAME || !env.NOVA_PASSWORD || !env.PROJECT) {
+      throw new Error('Missing env variables, please check .env.example');
     }
 
     const config: Config = {
@@ -26,6 +17,7 @@ class NovaHandler extends BrowserHandler {
       url: env.NOVA_URL,
       username: env.NOVA_USERNAME,
       password: env.NOVA_PASSWORD,
+      project: env.PROJECT,
     };
     super(config);
   }
@@ -280,5 +272,14 @@ class NovaHandler extends BrowserHandler {
     });
   }
 }
+
+// This is needed to extend `window`
+declare global {
+  interface Window {
+    clickBtn: any;
+  }
+}
+
+declare let clickBtn: any; // Grus way of bypassing TS error
 
 export { NovaHandler };
