@@ -1,4 +1,4 @@
-const moment = require('moment');
+import moment from 'moment';
 
 export const getDate = (divider = '-') => {
   const dateNow = moment().format(`YYYY${divider}MM${divider}DD`);

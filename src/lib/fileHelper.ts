@@ -1,5 +1,5 @@
-const os = require('os');
-const { getDate } = require('./dateHelper');
+import os from 'os';
+import { getDate } from './dateHelper';
 
 const getFileName = () => {
   const dateNow = getDate();

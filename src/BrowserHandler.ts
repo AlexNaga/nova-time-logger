@@ -1,17 +1,16 @@
-import { getEnvBool } from './lib/envHelper';
+import { env } from './lib/setup';
+import { Config } from './types/config';
 import { getFilePath } from './lib/fileHelper';
 import { openImage } from './lib/openImage';
 import { pageLog } from './lib/logHelper';
-import { Config } from './types/config';
 import chalk from 'chalk';
 import puppeteer from 'puppeteer';
 
-class BrowserHandler {
+export class BrowserHandler {
   url: string;
   username: string;
   password: string;
   config: Config;
-  isDebug: boolean;
   browser!: puppeteer.Browser;
   page!: puppeteer.Page;
 
@@ -24,7 +23,6 @@ class BrowserHandler {
     this.username = config.username;
     this.password = config.password;
     this.config = config;
-    this.isDebug = getEnvBool('is_debug');
   }
 
   async init() {
@@ -38,7 +36,7 @@ class BrowserHandler {
     }
 
     this.browser = await puppeteer.launch({
-      headless: !this.isDebug,
+      headless: !env.IS_DEBUG,
       defaultViewport: {
         height: screenHeight,
         width: screenWidth
@@ -47,9 +45,8 @@ class BrowserHandler {
     });
 
     this.page = await this.browser.newPage();
-    const shouldShowPageLog = getEnvBool('show_console_log');
 
-    if (shouldShowPageLog) {
+    if (env.SHOW_LOGS) {
       this.page.on('console', (msg) => pageLog(`(${chalk.magenta(this.config.site)}) ${msg.text()}`));
     }
   }
@@ -68,5 +65,3 @@ class BrowserHandler {
   }
 
 }
-
-export { BrowserHandler };
