@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 
 export const errorMsg = (msg: string) => {
-  throw new Error(msg);
+  console.log(chalk.red.bold('Error: ') + msg);
 };
 
 export const infoMsg = (msg: string) => {
