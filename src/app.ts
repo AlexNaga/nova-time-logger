@@ -1,19 +1,17 @@
 import app from 'commander'
-import { timeLogger } from './TimeLogger';
-import { setup, env } from './lib/setup';
+import { Config } from './types/Config';
+import { TimeLogger } from './TimeLogger';
 
 (async () => {
   app
     .usage('[options] <command>')
     .option('-m, --message <comment>', 'Activities done during the time period')
-    .option('-d, --debug', 'Show browser')
-    .option('-l, --logs', 'Output page logs')
+    .option('-d, --debug', 'Show browser', false)
+    .option('-l, --logs', 'Output page logs', false)
     .parse(process.argv);
 
-  await setup(app);
+  const config = new Config(app);
 
-  console.log(app.debug);
-  console.log(env.IS_DEBUG);
-
+  const timeLogger = new TimeLogger(config);
   await timeLogger.run();
 })();
