@@ -1,5 +1,5 @@
 import app from 'commander'
-import { Config } from './types/Config';
+import { Config } from './lib/Config';
 import { TimeLogger } from './TimeLogger';
 
 (async () => {
