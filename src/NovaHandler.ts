@@ -1,25 +1,20 @@
 import { BrowserHandler } from './BrowserHandler';
 import { capitalize } from './lib/fileHelper';
-import { successMsg } from './lib/logHelper';
+import { ConfigInterface } from './types/ConfigInterface';
 import { getDate, getMonth, getLastMonth } from './lib/dateHelper';
-import { Config } from './types/config';
+import { successMsg } from './lib/logHelper';
 import chalk from 'chalk';
-const env = process.env;
 
 class NovaHandler extends BrowserHandler {
-  constructor() {
-    if (!env.NOVA_URL || !env.NOVA_USERNAME || !env.NOVA_PASSWORD || !env.PROJECT) {
-      throw new Error('Missing env variables, please check `.env.example`');
+  config: ConfigInterface;
+
+  constructor(config: ConfigInterface) {
+    if (!config.url || !config.username || !config.password || !config.project) {
+      throw new Error('Missing config, please check `.env.example`');
     }
 
-    const config: Config = {
-      site: 'Nova',
-      url: env.NOVA_URL,
-      username: env.NOVA_USERNAME,
-      password: env.NOVA_PASSWORD,
-      project: env.PROJECT,
-    };
     super(config);
+    this.config = config;
   }
 
   async run() {
@@ -142,7 +137,7 @@ class NovaHandler extends BrowserHandler {
     await this.selectCategory();
     await this.addBillableHours();
     await this.selectTeamMember();
-    await this.addComment(env.MESSAGE);
+    await this.addComment(this.config.message);
     await this.saveTimeReport();
   }
 

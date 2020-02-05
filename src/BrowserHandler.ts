@@ -1,5 +1,4 @@
-import { env } from './lib/setup';
-import { Config } from './types/config';
+import { ConfigInterface } from './types/ConfigInterface';
 import { getFilePath } from './lib/fileHelper';
 import { openImage } from './lib/openImage';
 import { pageLog } from './lib/logHelper';
@@ -10,11 +9,11 @@ export class BrowserHandler {
   url: string;
   username: string;
   password: string;
-  config: Config;
+  config: ConfigInterface;
   browser!: puppeteer.Browser;
   page!: puppeteer.Page;
 
-  constructor(config: Config) {
+  constructor(config: ConfigInterface) {
     if (!config.screen) {
       config.screen = {};
     }
@@ -36,7 +35,7 @@ export class BrowserHandler {
     }
 
     this.browser = await puppeteer.launch({
-      headless: !env.IS_DEBUG,
+      headless: !this.config.isDebug,
       defaultViewport: {
         height: screenHeight,
         width: screenWidth
@@ -46,7 +45,7 @@ export class BrowserHandler {
 
     this.page = await this.browser.newPage();
 
-    if (env.SHOW_LOGS) {
+    if (this.config.showLogs) {
       this.page.on('console', (msg) => pageLog(`(${chalk.magenta(this.config.site)}) ${msg.text()}`));
     }
   }
