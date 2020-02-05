@@ -1,5 +1,5 @@
 {
-  "name": "scripts",
+  "name": "nova-time-logger",
   "version": "1.0.0",
   "description": "A Nova time logger",
   "repository": "https://github.com/AlexNaga/timeLogger",
@@ -8,6 +8,9 @@
     "start": "webpack --config ./webpack.config.js",
     "client": "node dist/main.js",
     "client:debug": "npm run client -- --debug"
+  },
+  "bin": {
+    "nova": "dist/main.js"
   },
   "author": "",
   "license": "ISC",
@@ -22,9 +25,6 @@
     "typescript": "^3.7.5",
     "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10"
-  },
-  "bin": {
-    "nova": "dist/main.js"
   },
   "dependencies": {
     "chalk": "^3.0.0",
