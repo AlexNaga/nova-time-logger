@@ -1,5 +1,5 @@
 import { CommanderStatic } from 'commander';
-import { ConfigInterface } from './ConfigInterface';
+import { ConfigInterface } from '../types/ConfigInterface';
 
 export class Config implements ConfigInterface {
   site = '';
