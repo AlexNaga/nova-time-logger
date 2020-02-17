@@ -1,4 +1,4 @@
-import { ConfigInterface } from './types/ConfigInterface';
+import { ConfigInterface } from './interfaces/ConfigInterface';
 import { getFilePath } from './lib/fileHelper';
 import { openImage } from './lib/openImage';
 import { pageLog } from './lib/logHelper';

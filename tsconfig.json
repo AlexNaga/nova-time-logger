@@ -3,13 +3,14 @@
   "compilerOptions": {
     "baseUrl": "./",
     "outDir": "./dist",
-    "target": "es5",
+    "target": "es6",
     "module": "esnext",
     "lib": [
       "dom",
       "dom.iterable",
-      "esnext"
+      "es6"
     ],
+    "declaration": true,
     "allowJs": false,
     "checkJs": false,
     "skipLibCheck": true,
@@ -23,6 +24,7 @@
     "jsx": "react"
   },
   "exclude": [
+    "dist",
     "node_modules",
     "webpack.*.js"
   ]

@@ -1,18 +1,14 @@
 import { BrowserHandler } from './BrowserHandler';
 import { capitalize } from './lib/fileHelper';
-import { ConfigInterface } from './types/ConfigInterface';
+import { Config } from './lib/Config';
 import { getDate, getMonth, getLastMonth } from './lib/dateHelper';
 import { successMsg } from './lib/logHelper';
 import chalk from 'chalk';
 
 class NovaHandler extends BrowserHandler {
-  config: ConfigInterface;
+  config: Config;
 
-  constructor(config: ConfigInterface) {
-    if (!config.url || !config.username || !config.password || !config.project) {
-      throw new Error('Missing config, please check `.env.example`');
-    }
-
+  constructor(config: Config) {
     super(config);
     this.config = config;
   }

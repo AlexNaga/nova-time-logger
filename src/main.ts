@@ -1,6 +1,6 @@
-import app from 'commander'
-import { Config } from './lib/Config';
+import app from 'commander';
 import { TimeLogger } from './TimeLogger';
+import { errorMsg } from './lib/logHelper';
 
 (async () => {
   app
@@ -10,8 +10,10 @@ import { TimeLogger } from './TimeLogger';
     .option('-l, --logs', 'Output page logs', false)
     .parse(process.argv);
 
-  const config = new Config(app);
-
-  const timeLogger = new TimeLogger(config);
-  await timeLogger.run();
+  try {
+    const timeLogger = new TimeLogger(app);
+    await timeLogger.run();
+  } catch (error) {
+    errorMsg(error);
+  }
 })();
