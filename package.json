@@ -1,5 +1,5 @@
 {
-  "name": "time-logger",
+  "name": "nova-time-logger",
   "version": "1.0.0",
   "description": "A time logger",
   "repository": "https://github.com/AlexNaga/timeLogger",
@@ -10,7 +10,7 @@
     "client:debug": "npm run client -- --debug"
   },
   "bin": {
-    "log_time": "dist/main.js"
+    "nova": "dist/main.js"
   },
   "author": "",
   "license": "ISC",
