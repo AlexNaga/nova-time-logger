@@ -138,7 +138,7 @@ class NovaHandler extends BrowserHandler {
   }
 
   async clickWantedProject() {
-    const projectId = '#b0p2o1187i0i1r1';
+    const projectId = '#b0p2o1187i0i2r1';
     await this.page.waitFor(projectId);
     await this.page.click(projectId);
   }
