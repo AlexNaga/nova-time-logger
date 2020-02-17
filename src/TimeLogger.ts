@@ -1,4 +1,5 @@
-import { ConfigInterface } from './types/ConfigInterface';
+import { Config } from './lib/Config';
+import { CommanderStatic } from 'commander';
 import { errorMsg, infoMsg } from './lib/logHelper';
 import { isWeekend } from './lib/dateHelper';
 import { NovaHandler } from './NovaHandler';
@@ -7,48 +8,42 @@ import chalk from 'chalk';
 import taskz from 'taskz';
 
 export class TimeLogger {
-  config: ConfigInterface;
+  novaConfig: Config;
 
-  constructor(config: ConfigInterface) {
-    this.config = config;
+  constructor(app: CommanderStatic) {
+    this.novaConfig = new Config(app, 'NOVA');
   }
 
   async run() {
     try {
       if (isWeekend()) {
-        return infoMsg('Can\'t add shifts on weekends.');
+        return infoMsg("Can't add shifts on weekends.");
       }
 
-      const novaConfig: ConfigInterface = {
-        ...this.config,
-        site: 'Nova',
-        url: process.env.NOVA_URL!,
-        username: process.env.NOVA_USERNAME!,
-        password: process.env.NOVA_PASSWORD!,
-        project: process.env.NOVA_PROJECT!,
-      };
-
-      const novaHandler = new NovaHandler(novaConfig);
+      const novaHandler = new NovaHandler(this.novaConfig);
       const tasks = taskz([
         {
-          text: chalk.magenta(this.config.site),
+          text: chalk.magenta(this.novaConfig.site),
           tasks: taskz([
             {
               text: 'Adding time report.',
-              task: async () => await novaHandler.run()
+              task: async () => await novaHandler.run(),
             },
           ]),
         },
       ]);
 
-      if (this.config.isDebug) { timer.start(); }
+      if (this.novaConfig.isDebug) {
+        timer.start();
+      }
 
       await tasks.run();
 
-      if (this.config.isDebug) { timer.stop(); }
+      if (this.novaConfig.isDebug) {
+        timer.stop();
+      }
     } catch (error) {
-      errorMsg(error.message);
-      return;
+      return error.message;
     }
   }
 }
