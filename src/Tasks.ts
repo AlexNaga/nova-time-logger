@@ -7,7 +7,7 @@ import { timer } from './lib/Timer';
 import chalk from 'chalk';
 import taskz from 'taskz';
 
-export class TimeLogger {
+export class Tasks {
   novaConfig: Config;
 
   constructor(app: CommanderStatic) {
