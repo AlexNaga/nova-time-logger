@@ -1,5 +1,5 @@
 import app from 'commander';
-import { TimeLogger } from './TimeLogger';
+import { Tasks } from './Tasks';
 import { errorMsg } from './lib/logHelper';
 
 (async () => {
@@ -11,8 +11,8 @@ import { errorMsg } from './lib/logHelper';
     .parse(process.argv);
 
   try {
-    const timeLogger = new TimeLogger(app);
-    await timeLogger.run();
+    const tasks = new Tasks(app);
+    await tasks.run();
   } catch (error) {
     errorMsg(error);
   }
