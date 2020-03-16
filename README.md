@@ -1,12 +1,23 @@
 ## Time logger
 
 ### How to run?
-$ `npm install`
-$ `npm start`
-$ `npm run client`
+
+Copy the file `.env.example`, name it `.env` and change the values.
+
+```sh
+$ npm i
+$ npm run build
+$ npm run client
+```
 
 ### How to install globally?
-$ `npm link`
+
+```sh
+# npm link
+```
 
 ### How to remove globally?
-$ `npm unlink`
+
+```sh
+# npm unlink
+```
