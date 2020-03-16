@@ -5,7 +5,8 @@
   "repository": "https://github.com/AlexNaga/timeLogger",
   "main": "dist/main.js",
   "scripts": {
-    "start": "webpack --config ./webpack.config.js",
+    "start": "webpack --config ./webpack.config.js --watch",
+    "build": "webpack --config ./webpack.config.js",
     "client": "node dist/main.js",
     "client:debug": "npm run client -- --debug"
   },
