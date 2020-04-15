@@ -16,3 +16,4 @@ build/
 
 # Dist
 dist/
+screenshots/nova/.DS_Store
