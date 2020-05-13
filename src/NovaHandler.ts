@@ -90,7 +90,7 @@ class NovaHandler extends BrowserHandler {
   }
 
   async clickTimeReportPage() {
-    const timeReportTab = '#b0p1o331i0i0r1';
+    const timeReportTab = '#b0p1o357i0i0r1';
     await this.page.waitFor(timeReportTab);
     await this.page.click(timeReportTab);
     await this.waitForTimeReportPage();
