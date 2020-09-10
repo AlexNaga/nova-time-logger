@@ -2,9 +2,9 @@
 
 ### How to run?
 
-Copy the file `.env.example`, name it `.env` and change the values.
+Copy the file `.env.example` , name it `.env` and change the values.
 
-```sh
+``` sh
 $ npm i
 $ npm run build
 $ npm run client
@@ -12,12 +12,14 @@ $ npm run client
 
 ### How to install globally?
 
-```sh
+By linking it globally, it's possible to run command `nova` in the terminal.
+
+``` sh
 # npm link
 ```
 
 ### How to remove globally?
 
-```sh
+``` sh
 # npm unlink
 ```
