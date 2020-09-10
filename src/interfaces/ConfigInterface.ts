@@ -7,5 +7,6 @@ export interface ConfigInterface {
   project: string;
   isDebug: boolean;
   showLogs: boolean;
+  days: number;
   screen?: { height?: number, width?: number };
 }

@@ -1,15 +1,15 @@
 import os from 'os';
 import { getDate } from './dateHelper';
 
-const getFileName = () => {
-  const dateNow = getDate();
+const getFileName = (days = 0) => {
+  const dateNow = getDate({ days });
   const filename = `${dateNow}.png`;
   return filename;
 };
 
-export const getFilePath = (dirName = 'misc') => {
+export const getFilePath = (dirName = 'misc', days = 0) => {
   dirName = dirName.toLowerCase();
-  const fileName = getFileName();
+  const fileName = getFileName(days);
   const filePath = `${__dirname}/../screenshots/${dirName}/${fileName}`;
   return filePath;
 };

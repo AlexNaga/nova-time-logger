@@ -57,7 +57,7 @@ export class BrowserHandler {
   }
 
   async exit() {
-    const filePath = getFilePath(this.config.site);
+    const filePath = getFilePath(this.config.site, this.config.days);
     await this.takeScreenshot(filePath);
     await openImage(filePath);
     await this.closeBrowser();

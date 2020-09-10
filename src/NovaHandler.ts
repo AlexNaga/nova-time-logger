@@ -40,16 +40,20 @@ class NovaHandler extends BrowserHandler {
   }
 
   async isShiftAlreadyAdded() {
-    const dateNow = getDate('/');
+    const todaysDate = getDate({ divider: '/' });
+    const dateToCheck = getDate({ divider: '/', days: this.config.days});
     const pageTxt = await this.getPageTxt();
-    let dateCount = (pageTxt.match(new RegExp(dateNow, 'g')) || []).length; // Count matches on page
+    let dateCount = (pageTxt.match(new RegExp(dateToCheck, 'g')) || []).length; // Count matches on page
 
-    dateCount -= 1; // Since todays date is always visible on the site
+    if (todaysDate === dateToCheck) {
+      dateCount -= 1; // Since todays date is always visible on the site
+    }
+
     const isDateMismatch = dateCount < 0;
 
     if (isDateMismatch) {
       await this.exit();
-      throw new Error(`The script doesn't match todays date on ${chalk.magenta(this.config.site)}.`);
+      throw new Error(`Is date mismatch on ${chalk.magenta(this.config.site)}.`);
     }
 
     const doesShiftExist = dateCount > 0;
@@ -81,7 +85,7 @@ class NovaHandler extends BrowserHandler {
 
   async isSameDate() {
     try {
-      const dateNow = getDate('/');
+      const dateNow = getDate({ divider: '/'});
       await this.hasPageTxt(dateNow);
     } catch (error) {
       await this.exit();
@@ -134,6 +138,7 @@ class NovaHandler extends BrowserHandler {
     await this.addBillableHours();
     await this.selectTeamMember();
     await this.addComment(this.config.message);
+    await this.addDate(this.config.days);
     await this.saveTimeReport();
   }
 
@@ -183,6 +188,16 @@ class NovaHandler extends BrowserHandler {
     await this.page.click(commentField);
     await this.page.type(commentField, comment);
     await this.page.waitFor(1000);
+  }
+
+  async addDate(days = 0) {
+    const dateToAdd = getDate({divider: '/', days });
+    await this.page.keyboard.press('Tab');
+    await this.page.waitFor(1000);
+    await this.page.keyboard.type(dateToAdd);
+    await this.page.keyboard.press('Tab');
+    await this.page.waitFor(1000);
+    await this.page.keyboard.type(dateToAdd);
   }
 
   async saveTimeReport() {
