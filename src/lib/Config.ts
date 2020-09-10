@@ -1,5 +1,6 @@
 import { CommanderStatic } from 'commander';
 import { ConfigInterface } from '../interfaces/ConfigInterface';
+import { negative, positive } from 'check-types';
 
 export class Config implements ConfigInterface {
   site: string = '';
@@ -10,6 +11,7 @@ export class Config implements ConfigInterface {
   message: string = '';
   isDebug: boolean = false;
   showLogs: boolean = false;
+  days: number = 0;
 
   constructor(app: CommanderStatic, site: string) {
     this.site = site.toUpperCase();
@@ -19,11 +21,8 @@ export class Config implements ConfigInterface {
     this.password = process.env['NOVA_PASSWORD']!;
     this.project = process.env['NOVA_PROJECT']!;
 
-    // TODO: Right now we can't load dotenv variables dynamically
-    // this.url = getEnv(this.site, 'URL');
-    // this.username = getEnv(this.site, 'USERNAME');
-    // this.password = getEnv(this.site, 'PASSWORD');
-    // this.project = getEnv(this.site, 'PROJECT');
+    // Check if we should add or subtract days from todays date
+    if (validateInt(app.days)) this.days = app.days;
 
     this.message = app.message || '';
     this.isDebug = app.debug === true;
@@ -41,3 +40,5 @@ const getEnv = (site: string, key: string) => {
     return envItem;
   }
 };
+
+const validateInt = (num: string) => positive(parseInt(num)) || negative(parseInt(num));

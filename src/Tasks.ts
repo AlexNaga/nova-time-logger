@@ -1,6 +1,6 @@
 import { Config } from './lib/Config';
 import { CommanderStatic } from 'commander';
-import { errorMsg, infoMsg } from './lib/logHelper';
+import { infoMsg } from './lib/logHelper';
 import { isWeekend } from './lib/dateHelper';
 import { NovaHandler } from './NovaHandler';
 import { timer } from './lib/Timer';
@@ -16,8 +16,8 @@ export class Tasks {
 
   async run() {
     try {
-      if (isWeekend()) {
-        return infoMsg("Can't add shifts on weekends.");
+      if (isWeekend(this.novaConfig.days)) {
+        return infoMsg('Can\'t add shifts on weekends.');
       }
 
       const novaHandler = new NovaHandler(this.novaConfig);

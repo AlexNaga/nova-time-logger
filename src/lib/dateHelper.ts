@@ -1,30 +1,30 @@
 import moment from 'moment';
 
-export const getDate = (divider = '-') => {
-  const dateNow = moment().format(`YYYY${divider}MM${divider}DD`);
-  return dateNow;
+export const getDate = ({ divider = '-', days = 0}: { divider?: string, days?: number } = {})  => {
+  const dateResult = moment().add(days, 'days').format(`YYYY${divider}MM${divider}DD`);
+  return dateResult;
 };
 
-export const getMonth = () => {
-  const monthAsNr = moment().month();
+export const getMonth = (days = 0) => {
+  const monthAsNr = moment().add(days, 'days').month();
   const month = moment.months(monthAsNr).toLowerCase();
   return month;
 };
 
-export const getLastMonth = () => {
-  const monthAsNr = (moment().month()) - 1;
+export const getLastMonth = (days = 0) => {
+  const monthAsNr = (moment().add(days, 'days').month()) - 1;
   const month = moment.months(monthAsNr).toLowerCase();
   return month;
 };
 
-export const getWeekday = () => {
-  const weekdayAsNr = moment().weekday();
+export const getWeekday = (days = 0) => {
+  const weekdayAsNr = moment().add(days, 'days').weekday();
   const weekday = moment.weekdays(weekdayAsNr).toLowerCase();
   return weekday;
 };
 
-export const isWeekend = () => {
-  const weekday = getWeekday();
+export const isWeekend = (days = 0) => {
+  const weekday = getWeekday(days);
 
   if (weekday === 'saturday' || weekday === 'sunday') {
     return true;

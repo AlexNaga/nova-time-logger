@@ -6,7 +6,8 @@ import { errorMsg } from './lib/logHelper';
   app
     .usage('[options] <command>')
     .option('-m, --message <comment>', 'Activities done during the time period', '-')
-    .option('-d, --debug', 'Show browser', false)
+    .option('-d, --days <number>', 'Days to add or substract to todays date')
+    .option('--debug', 'Show browser', false)
     .option('-l, --logs', 'Output page logs', false)
     .parse(process.argv);
 
