@@ -143,9 +143,24 @@ class NovaHandler extends BrowserHandler {
   }
 
   async clickWantedProject() {
-    const projectId = '#b0p2o1187i0i2r1';
-    await this.page.waitFor(projectId);
-    await this.page.click(projectId);
+    try {
+      const projectId = await this.getProjectElemID() as string;
+      await this.page.waitFor(projectId);
+      await this.page.click(projectId);
+    } catch (error) {
+      await this.exit();
+      throw new Error(`Could not find project "${this.config.project}" on ${chalk.magenta(this.config.site)}.`);
+    }
+  }
+
+  async getProjectElemID() {
+    // TODO: Wait for text on page instead
+    await this.page.waitFor(1000);
+
+    const ids = await this.page.$$eval('.text', (elem, project) => elem
+      .filter(elem => elem.textContent?.includes(project))
+      .map(elem => elem.parentElement?.parentElement?.parentElement?.firstElementChild?.id), this.config.project);
+    return  `#${ids[0]}`;
   }
 
   async clickCreateReport() {
@@ -280,7 +295,9 @@ class NovaHandler extends BrowserHandler {
 }
 
 // This is needed to extend `window`
+// eslint-disable-next-line no-unused-vars
 declare global {
+  // eslint-disable-next-line no-unused-vars
   interface Window {
     clickBtn: any;
   }
