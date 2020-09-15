@@ -1,6 +1,6 @@
 import { BrowserHandler } from './BrowserHandler';
 import { capitalize } from './lib/fileHelper';
-import { Config } from './lib/Config';
+import { Config, validateInt } from './lib/Config';
 import { getDate, getMonth, getLastMonth } from './lib/dateHelper';
 import { successMsg } from './lib/logHelper';
 import chalk from 'chalk';
@@ -136,7 +136,7 @@ class NovaHandler extends BrowserHandler {
     await this.clickCreateReport();
     await this.selectCategory();
     await this.addBillableHours();
-    await this.selectTeamMember();
+    await this.selectIoNumber();
     await this.addComment(this.config.message);
     await this.addDate(this.config.days);
     await this.saveTimeReport();
@@ -184,17 +184,42 @@ class NovaHandler extends BrowserHandler {
     await this.page.keyboard.type(billableHours.toString());
   }
 
-  async selectTeamMember() {
+  async selectIoNumber() {
     await this.page.keyboard.press('Tab');
     await this.page.waitFor(1000);
     await this.page.keyboard.press('ArrowDown');
     await this.page.waitFor(1500);
+    await this.page.keyboard.press('ArrowDown');
+    const hasSetIoNumber = validateInt(this.config.ioNumber);
 
-    // Select the third element in the dropdown
-    await this.page.keyboard.press('ArrowDown');
-    await this.page.keyboard.press('ArrowDown');
-    await this.page.keyboard.press('ArrowDown');
+    const checkIfFound = async () => {
+      const itemTxt = await this.page.$eval('.focus', node => (<HTMLElement>node).innerText);
+      return itemTxt.toUpperCase().includes(this.config.ioNumber);
+    };
+
+    let isFound = await checkIfFound();
+    const startTime = Date.now();
+    const timeLimitInMs = 10000;
+
+    // Continue after time limit
+    while (isFound === false && Date.now() - startTime < timeLimitInMs) {
+      await this.page.keyboard.press('ArrowDown');
+      isFound = await checkIfFound();
+    }
+
     await this.page.keyboard.press('Enter');
+
+    const validateIoNumber = async () => {
+      const itemTxt = await this.page.$eval('.focused', node => (<HTMLElement>node).innerText);
+      const isCorrectIoNumber = itemTxt.includes(this.config.ioNumber);
+
+      if (!isCorrectIoNumber) {
+        await this.browser.close();
+        throw new Error(`The selected IO Number is wrong on ${chalk.magenta(this.config.site)}.`);
+      }
+    };
+
+    if (hasSetIoNumber)  await validateIoNumber();
   }
 
   async addComment(comment = '- ') {
