@@ -9,6 +9,7 @@ export class Config implements ConfigInterface {
   password: string = '';
   project: string = '';
   message: string = '';
+  ioNumber: string = '';
   isDebug: boolean = false;
   showLogs: boolean = false;
   days: number = 0;
@@ -16,18 +17,21 @@ export class Config implements ConfigInterface {
   constructor(app: CommanderStatic, site: string) {
     this.site = site.toUpperCase();
 
+    const project = app.project || process.env['DEFAULT_NOVA_PROJECT'];
+    this.project = project.toUpperCase();
     this.url = process.env['NOVA_URL']!;
     this.username = process.env['NOVA_USERNAME']!;
     this.password = process.env['NOVA_PASSWORD']!;
-    this.project = process.env['NOVA_PROJECT']?.toUpperCase()!;
 
     // Check if we should add or subtract days from todays date
     if (validateInt(app.days)) this.days = app.days;
 
+    const firstName = this.username.split(' ')[0].toUpperCase();
+    this.ioNumber = app.ioNumber || firstName;
     this.message = app.message || '';
     this.isDebug = app.debug === true;
     this.showLogs = app.logs === true;
   }
 }
 
-const validateInt = (num: string) => positive(parseInt(num)) || negative(parseInt(num));
+export const validateInt = (num: string) => positive(parseInt(num)) || negative(parseInt(num));
