@@ -17,11 +17,11 @@ export class Config implements ConfigInterface {
   constructor(app: CommanderStatic, site: string) {
     this.site = site.toUpperCase();
 
-    const project = app.project || process.env['DEFAULT_NOVA_PROJECT'];
+    const project = app.project || process.env['DEFAULT_PROJECT'];
     this.project = project.toUpperCase();
-    this.url = process.env['NOVA_URL']!;
-    this.username = process.env['NOVA_USERNAME']!;
-    this.password = process.env['NOVA_PASSWORD']!;
+    this.url = process.env['URL']!;
+    this.username = process.env['USERNAME']!;
+    this.password = process.env['PASSWORD']!;
 
     // Check if we should add or subtract days from todays date
     if (validateInt(app.days)) this.days = app.days;
