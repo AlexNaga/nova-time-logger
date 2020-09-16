@@ -13,8 +13,7 @@
 Copy the file `.env.example` , name it `.env` and change the values.
 
 ``` sh
-$ npm i
-$ npm run build
+$ npm i && npm run build
 $ npm run client
 ```
 
