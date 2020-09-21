@@ -203,6 +203,7 @@ class NovaHandler extends BrowserHandler {
 
     // Continue after time limit
     while (isFound === false && Date.now() - startTime < timeLimitInMs) {
+      await this.page.waitFor(500);
       await this.page.keyboard.press('ArrowDown');
       isFound = await checkIfFound();
     }
