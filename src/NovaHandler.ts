@@ -26,7 +26,8 @@ class NovaHandler extends BrowserHandler {
 
     if (shiftAlreadyExists) {
       await this.exit();
-      throw new Error(`Shift already exists in ${chalk.magenta(this.config.site)}.`);
+      const date = getDate({ divider: '/', days: this.config.days});
+      throw new Error(`${date}: Shift already exists in ${chalk.magenta(this.config.site)}.`);
     }
 
     while (shiftAlreadyExists === false) {

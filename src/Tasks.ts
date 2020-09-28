@@ -1,7 +1,7 @@
 import { Config } from './lib/Config';
 import { CommanderStatic } from 'commander';
 import { infoMsg } from './lib/logHelper';
-import { isWeekend } from './lib/dateHelper';
+import { getDate, isWeekend } from './lib/dateHelper';
 import { NovaHandler } from './NovaHandler';
 import { timer } from './lib/Timer';
 import chalk from 'chalk';
@@ -20,13 +20,15 @@ export class Tasks {
         return infoMsg('Can\'t add shifts on weekends.');
       }
 
+      const date = getDate({ divider: '/', days: this.novaConfig.days });
+
       const novaHandler = new NovaHandler(this.novaConfig);
       const tasks = taskz([
         {
           text: chalk.magenta(this.novaConfig.site),
           tasks: taskz([
             {
-              text: 'Adding time report.',
+              text: `${date}: Adding time report.`,
               task: async () => await novaHandler.run(),
             },
           ]),
