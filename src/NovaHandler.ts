@@ -74,9 +74,9 @@ class NovaHandler extends BrowserHandler {
 
   async waitForLoginPage(userField: string, pwField: string, loginBtn: string) {
     try {
-      await this.page.waitFor(userField);
-      await this.page.waitFor(pwField);
-      await this.page.waitFor(loginBtn);
+      await this.page.waitForSelector(userField);
+      await this.page.waitForSelector(pwField);
+      await this.page.waitForSelector(loginBtn);
       await this.hasPageTxt('sign in');
     } catch (error) {
       await this.exit();
@@ -96,7 +96,7 @@ class NovaHandler extends BrowserHandler {
 
   async clickTimeReportPage() {
     const timeReportTab = '#b0p1o357i0i0r1';
-    await this.page.waitFor(timeReportTab);
+    await this.page.waitForSelector(timeReportTab);
     await this.page.click(timeReportTab);
     await this.waitForTimeReportPage();
   }
@@ -127,11 +127,11 @@ class NovaHandler extends BrowserHandler {
 
   async addShift() {
     const addShiftBtn = '#b0p6o368i0i0r1';
-    await this.page.waitFor(addShiftBtn);
+    await this.page.waitForSelector(addShiftBtn);
     await this.page.click(addShiftBtn);
 
     const projectSelectionPage = '#b0p2o1181i0i0r1';
-    await this.page.waitFor(projectSelectionPage);
+    await this.page.waitForSelector(projectSelectionPage);
 
     await this.clickWantedProject();
     await this.clickCreateReport();
@@ -146,7 +146,7 @@ class NovaHandler extends BrowserHandler {
   async clickWantedProject() {
     try {
       const projectId = await this.getProjectElemID() as string;
-      await this.page.waitFor(projectId);
+      await this.page.waitForSelector(projectId);
       await this.page.click(projectId);
     } catch (error) {
       await this.exit();
@@ -156,7 +156,7 @@ class NovaHandler extends BrowserHandler {
 
   async getProjectElemID() {
     // TODO: Wait for text on page instead
-    await this.page.waitFor(1000);
+    await this.page.waitForTimeout(1000);
 
     const ids = await this.page.$$eval('.text', (elem, project) => elem
       .filter(elem => elem.textContent?.includes(project))
@@ -166,14 +166,14 @@ class NovaHandler extends BrowserHandler {
 
   async clickCreateReport() {
     const createReportBtn = '#b0p3o1211i0i0r1';
-    await this.page.waitFor(createReportBtn);
+    await this.page.waitForSelector(createReportBtn);
     await this.page.click(createReportBtn);
   }
 
   async selectCategory() {
-    await this.page.waitFor(1000);
+    await this.page.waitForTimeout(1000);
     await this.page.keyboard.press('ArrowDown');
-    await this.page.waitFor(500);
+    await this.page.waitForTimeout(500);
     await this.page.keyboard.press('ArrowDown');
     await this.page.keyboard.press('Enter');
   }
@@ -181,15 +181,15 @@ class NovaHandler extends BrowserHandler {
   async addBillableHours() {
     const billableHours = 8;
     await this.page.keyboard.press('Tab');
-    await this.page.waitFor(1000);
+    await this.page.waitForTimeout(1000);
     await this.page.keyboard.type(billableHours.toString());
   }
 
   async selectIoNumber() {
     await this.page.keyboard.press('Tab');
-    await this.page.waitFor(1000);
+    await this.page.waitForTimeout(1000);
     await this.page.keyboard.press('ArrowDown');
-    await this.page.waitFor(1500);
+    await this.page.waitForTimeout(1500);
     await this.page.keyboard.press('ArrowDown');
     const hasSetIoNumber = validateInt(this.config.ioNumber);
 
@@ -204,7 +204,7 @@ class NovaHandler extends BrowserHandler {
 
     // Continue after time limit
     while (isFound === false && Date.now() - startTime < timeLimitInMs) {
-      await this.page.waitFor(500);
+      await this.page.waitForTimeout(500);
       await this.page.keyboard.press('ArrowDown');
       isFound = await checkIfFound();
     }
@@ -226,25 +226,25 @@ class NovaHandler extends BrowserHandler {
 
   async addComment(comment = '- ') {
     const commentField = '#b0p1o374i0i0r1';
-    await this.page.waitFor(commentField);
+    await this.page.waitForSelector(commentField);
     await this.page.click(commentField);
     await this.page.type(commentField, comment);
-    await this.page.waitFor(1000);
+    await this.page.waitForTimeout(1000);
   }
 
   async addDate(days = 0) {
     const dateToAdd = getDate({divider: '/', days });
     await this.page.keyboard.press('Tab');
-    await this.page.waitFor(1000);
+    await this.page.waitForTimeout(1000);
     await this.page.keyboard.type(dateToAdd);
     await this.page.keyboard.press('Tab');
-    await this.page.waitFor(1000);
+    await this.page.waitForTimeout(1000);
     await this.page.keyboard.type(dateToAdd);
   }
 
   async saveTimeReport() {
     const saveTimeReportBtn = '#b0p2o442i0i0r1';
-    await this.page.waitFor(saveTimeReportBtn);
+    await this.page.waitForSelector(saveTimeReportBtn);
     await this.page.click(saveTimeReportBtn);
   }
 
