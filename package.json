@@ -1,6 +1,6 @@
 {
   "name": "nova-time-logger",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "A time logger",
   "repository": "https://github.com/AlexNaga/timeLogger",
   "main": "dist/main.js",
