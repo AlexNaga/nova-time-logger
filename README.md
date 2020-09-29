@@ -10,10 +10,13 @@
 
 ### How to run?
 
-Copy the file `.env.example` , name it `.env` and change the values.
-
 ``` sh
 $ npm i
+```
+
+After install, change the example values in the file `.env`
+
+``` sh
 $ npm run client
 ```
 
