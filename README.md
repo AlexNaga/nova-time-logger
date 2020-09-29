@@ -17,7 +17,7 @@ $ npm i
 After install, change the example values in the file `.env`
 
 ``` sh
-$ npm run client
+$ npm run build && npm run client
 ```
 
 ### How to install globally?
