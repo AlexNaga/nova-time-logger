@@ -1,7 +1,7 @@
 import { BrowserHandler } from './BrowserHandler';
 import { capitalize } from './lib/fileHelper';
 import { Config, validateInt } from './lib/Config';
-import { getDate, getMonth, getLastMonth } from './lib/dateHelper';
+import { getDate, getMonth, getLastMonth, getDateOfDayThisWeek, getMonthOfDayThisWeek } from './lib/dateHelper';
 import { successMsg } from './lib/logHelper';
 import chalk from 'chalk';
 
@@ -22,27 +22,47 @@ class NovaHandler extends BrowserHandler {
     await this.isSameDate();
     await this.clickTimeReportPage();
 
-    let shiftAlreadyExists = await this.isShiftAlreadyAdded();
+    if (this.config.week) {
+      const mondaysMonth = getMonthOfDayThisWeek('monday');
+      const fridaysMonth = getMonthOfDayThisWeek('friday');
 
-    if (shiftAlreadyExists) {
-      await this.exit();
-      const date = getDate({ divider: '/', days: this.config.days});
-      throw new Error(`${date}: Shift already exists in ${chalk.magenta(this.config.site)}.`);
-    }
+      if (mondaysMonth !== fridaysMonth) {
+        await this.exit();
+        throw new Error('Reporting time over several months is not yet supported.');
+      }
 
-    while (shiftAlreadyExists === false) {
+      const fridaysDate = getDateOfDayThisWeek({ divider: '/', day: 'friday' });
+      const shiftAlreadyExists = await this.isShiftAlreadyAdded(fridaysDate!);
+
+      if (shiftAlreadyExists) {
+        await this.exit();
+        throw new Error(`${fridaysDate}: Already reported for this week in ${chalk.magenta(this.config.site)}.`);
+      }
+
       await this.addShift();
       await this.waitForTimeReportPage();
-      shiftAlreadyExists = await this.isShiftAlreadyAdded();
+      await this.isShiftAlreadyAdded(fridaysDate!);
+
+    } else {
+      const dateToCheck = getDate({ divider: '/', days: this.config.days});
+      const shiftAlreadyExists = await this.isShiftAlreadyAdded(dateToCheck);
+
+      if (shiftAlreadyExists) {
+        await this.exit();
+        throw new Error(`${dateToCheck}: Shift already exists in ${chalk.magenta(this.config.site)}.`);
+      }
+
+      await this.addShift();
+      await this.waitForTimeReportPage();
+      await this.isShiftAlreadyAdded(dateToCheck);
     }
 
     successMsg(`Added shift to ${chalk.magenta(this.config.site)}.`);
     await this.exit();
   }
 
-  async isShiftAlreadyAdded() {
+  async isShiftAlreadyAdded(dateToCheck: string) {
     const todaysDate = getDate({ divider: '/' });
-    const dateToCheck = getDate({ divider: '/', days: this.config.days});
     const pageTxt = await this.getPageTxt();
     let dateCount = (pageTxt.match(new RegExp(dateToCheck, 'g')) || []).length; // Count matches on page
 
@@ -136,10 +156,10 @@ class NovaHandler extends BrowserHandler {
     await this.clickWantedProject();
     await this.clickCreateReport();
     await this.selectCategory();
-    await this.addBillableHours();
+    await this.addBillableHours(this.config.hours);
     await this.selectIoNumber();
     await this.addComment(this.config.message);
-    await this.addDate(this.config.days);
+    await this.addDate(this.config.days, this.config.week);
     await this.saveTimeReport();
   }
 
@@ -178,20 +198,20 @@ class NovaHandler extends BrowserHandler {
     await this.page.keyboard.press('Enter');
   }
 
-  async addBillableHours() {
-    const billableHours = 8;
+  async addBillableHours(hours: number) {
     await this.page.keyboard.press('Tab');
     await this.page.waitForTimeout(1000);
-    await this.page.keyboard.type(billableHours.toString());
+    await this.page.keyboard.type(hours.toString());
   }
 
   async selectIoNumber() {
+    const hasSetIoNumber = validateInt(this.config.ioNumber);
     await this.page.keyboard.press('Tab');
     await this.page.waitForTimeout(1000);
     await this.page.keyboard.press('ArrowDown');
     await this.page.waitForTimeout(1500);
     await this.page.keyboard.press('ArrowDown');
-    const hasSetIoNumber = validateInt(this.config.ioNumber);
+    await this.page.waitForTimeout(1000);
 
     const checkIfFound = async () => {
       const itemTxt = await this.page.$eval('.focus', node => (<HTMLElement>node).innerText);
@@ -203,7 +223,7 @@ class NovaHandler extends BrowserHandler {
     const timeLimitInMs = 10000;
 
     // Continue after time limit
-    while (isFound === false && Date.now() - startTime < timeLimitInMs) {
+    while (!isFound && Date.now() - startTime < timeLimitInMs) {
       await this.page.waitForTimeout(500);
       await this.page.keyboard.press('ArrowDown');
       isFound = await checkIfFound();
@@ -232,14 +252,28 @@ class NovaHandler extends BrowserHandler {
     await this.page.waitForTimeout(1000);
   }
 
-  async addDate(days = 0) {
-    const dateToAdd = getDate({divider: '/', days });
+  async addDate(days = 0, reportForWeek: boolean) {
     await this.page.keyboard.press('Tab');
     await this.page.waitForTimeout(1000);
-    await this.page.keyboard.type(dateToAdd);
+    let todaysDate: string;
+
+    if (reportForWeek) {
+      const mondaysDate = getDateOfDayThisWeek({ divider: '/', day: 'monday' });
+      await this.page.keyboard.type(mondaysDate!);
+    } else {
+      todaysDate = getDate({divider: '/', days });
+      await this.page.keyboard.type(todaysDate);
+    }
+
     await this.page.keyboard.press('Tab');
     await this.page.waitForTimeout(1000);
-    await this.page.keyboard.type(dateToAdd);
+
+    if (reportForWeek) {
+      const fridaysDate = getDateOfDayThisWeek({ divider: '/', day: 'friday' });
+      await this.page.keyboard.type(fridaysDate!);
+    } else {
+      await this.page.keyboard.type(todaysDate!);
+    }
   }
 
   async saveTimeReport() {
