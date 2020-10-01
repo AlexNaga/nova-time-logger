@@ -5,6 +5,28 @@ export const getDate = ({ divider = '-', days = 0}: { divider?: string, days?: n
   return dateResult;
 };
 
+export const getDateOfDayThisWeek = ({ divider = '-', day = '' }: { divider?: string, day?: string } = {}) => {
+  if (day === 'monday' || day === 'friday') {
+    let weekdayAsNr = 1; // default is monday
+
+    if (day === 'friday') weekdayAsNr = 5;
+
+    const dateResult = moment().day(weekdayAsNr).format(`YYYY${divider}MM${divider}DD`);
+    return dateResult;
+  }
+};
+
+export const getMonthOfDayThisWeek = (day: string) => {
+  if (day === 'monday' || day === 'friday') {
+    let weekdayAsNr = 1; // default is monday
+
+    if (day === 'friday') weekdayAsNr = 5;
+
+    const month = moment().day(weekdayAsNr).format('MMMM');
+    return month;
+  }
+};
+
 export const getMonth = (days = 0) => {
   const monthAsNr = moment().add(days, 'days').month();
   const month = moment.months(monthAsNr).toLowerCase();
