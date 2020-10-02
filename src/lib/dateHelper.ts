@@ -26,8 +26,8 @@ export const getDaysOfThisWeek = (divider = '-'): WeekDays => {
   for (let weekdayAsNr = 1; weekdayAsNr < 6; weekdayAsNr++) {
     const day = moment().day(weekdayAsNr);
     const name = day.format('dddd').toLowerCase();
-    const date = day.format(`YYYY${divider}MM${divider}DD`);
     const month = day.format('MMMM').toLowerCase();
+    const date = day.format(`YYYY${divider}MM${divider}DD`);
     days[name] = { name, date, month };
   }
   return days;
