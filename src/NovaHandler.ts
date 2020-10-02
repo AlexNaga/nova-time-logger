@@ -1,7 +1,7 @@
 import { BrowserHandler } from './BrowserHandler';
 import { capitalize } from './lib/fileHelper';
 import { Config, validateInt } from './lib/Config';
-import { getDate, getMonth, getLastMonth, getDateOfDayThisWeek, getMonthOfDayThisWeek } from './lib/dateHelper';
+import { getDate, getMonth, getLastMonth, getDaysOfThisWeek } from './lib/dateHelper';
 import { successMsg } from './lib/logHelper';
 import chalk from 'chalk';
 
@@ -23,25 +23,22 @@ class NovaHandler extends BrowserHandler {
     await this.clickTimeReportPage();
 
     if (this.config.week) {
-      const mondaysMonth = getMonthOfDayThisWeek('monday');
-      const fridaysMonth = getMonthOfDayThisWeek('friday');
+      const { monday, friday } = getDaysOfThisWeek('/');
 
-      if (mondaysMonth !== fridaysMonth) {
+      if (monday.month !== friday.month) {
         await this.exit();
         throw new Error('Reporting time over several months is not yet supported.');
       }
 
-      const fridaysDate = getDateOfDayThisWeek({ divider: '/', day: 'friday' });
-      const shiftAlreadyExists = await this.isShiftAlreadyAdded(fridaysDate!);
+      const shiftAlreadyExists = await this.isShiftAlreadyAdded(friday.date);
 
       if (shiftAlreadyExists) {
         await this.exit();
-        throw new Error(`${fridaysDate}: Already reported for this week in ${chalk.magenta(this.config.site)}.`);
+        throw new Error(`${friday.date}: Already reported for this week in ${chalk.magenta(this.config.site)}.`);
       }
 
       await this.addShift();
       await this.waitForTimeReportPage();
-      await this.isShiftAlreadyAdded(fridaysDate!);
 
     } else {
       const dateToCheck = getDate({ divider: '/', days: this.config.days});
@@ -256,10 +253,10 @@ class NovaHandler extends BrowserHandler {
     await this.page.keyboard.press('Tab');
     await this.page.waitForTimeout(1000);
     let todaysDate: string;
+    const { monday, friday } = getDaysOfThisWeek('/');
 
     if (reportForWeek) {
-      const mondaysDate = getDateOfDayThisWeek({ divider: '/', day: 'monday' });
-      await this.page.keyboard.type(mondaysDate!);
+      await this.page.keyboard.type(monday.date);
     } else {
       todaysDate = getDate({divider: '/', days });
       await this.page.keyboard.type(todaysDate);
@@ -269,8 +266,7 @@ class NovaHandler extends BrowserHandler {
     await this.page.waitForTimeout(1000);
 
     if (reportForWeek) {
-      const fridaysDate = getDateOfDayThisWeek({ divider: '/', day: 'friday' });
-      await this.page.keyboard.type(fridaysDate!);
+      await this.page.keyboard.type(friday.date);
     } else {
       await this.page.keyboard.type(todaysDate!);
     }
