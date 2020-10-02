@@ -26,6 +26,7 @@ class NovaHandler extends BrowserHandler {
       const { monday, friday } = getDaysOfThisWeek('/');
 
       if (monday.month !== friday.month) {
+        // TODO: Here we should instead create individual time reports for the week
         await this.exit();
         throw new Error('Reporting time over several months is not yet supported.');
       }
@@ -51,7 +52,6 @@ class NovaHandler extends BrowserHandler {
 
       await this.addShift();
       await this.waitForTimeReportPage();
-      await this.isShiftAlreadyAdded(dateToCheck);
     }
 
     successMsg(`Added shift to ${chalk.magenta(this.config.site)}.`);
