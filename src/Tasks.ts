@@ -28,7 +28,7 @@ export class Tasks {
           text: chalk.magenta(this.novaConfig.site),
           tasks: taskz([
             {
-              text: `${date}: Adding time report.`,
+              text: `${date}: Adding time report${this.novaConfig.week ? ' for week' : ''}.`,
               task: async () => await novaHandler.run(),
             },
           ]),
