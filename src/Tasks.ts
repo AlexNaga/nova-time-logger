@@ -1,11 +1,12 @@
 import { Config } from './lib/Config';
 import { CommanderStatic } from 'commander';
-import { infoMsg } from './lib/logHelper';
+import { infoMsg, quoteMsg } from './lib/logHelper';
 import { getDate, isWeekend } from './lib/dateHelper';
 import { NovaHandler } from './NovaHandler';
 import { timer } from './lib/Timer';
 import chalk from 'chalk';
 import taskz from 'taskz';
+import { getRandomQuote } from './lib/quotes';
 
 export class Tasks {
   novaConfig: Config;
@@ -44,6 +45,8 @@ export class Tasks {
       if (this.novaConfig.isDebug) {
         timer.stop();
       }
+
+      quoteMsg(getRandomQuote());
     } catch (error) {
       return error.message;
     }
