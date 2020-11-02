@@ -5,11 +5,7 @@
     "outDir": "./dist",
     "target": "es6",
     "module": "esnext",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "es6"
-    ],
+    "lib": ["dom", "dom.iterable", "es6"],
     "declaration": true,
     "allowJs": false,
     "checkJs": false,
@@ -23,9 +19,5 @@
     "resolveJsonModule": true,
     "jsx": "react"
   },
-  "exclude": [
-    "dist",
-    "node_modules",
-    "webpack.*.js"
-  ]
+  "exclude": ["dist", "node_modules", "webpack.*.js"]
 }
