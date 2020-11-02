@@ -14,7 +14,7 @@ interface WeekDays {
   friday: Day;
 }
 
-export const getDate = ({ divider = '-', days = 0}: { divider?: string, days?: number } = {})  => {
+export const getDate = ({ divider = '-', days = 0 }: { divider?: string, days?: number } = {}) => {
   const dateResult = moment().add(days, 'days').format(`YYYY${divider}MM${divider}DD`);
   return dateResult;
 };
@@ -32,6 +32,8 @@ export const getDaysOfThisWeek = (divider = '-'): WeekDays => {
   }
   return days;
 };
+
+export const getWeekNr = (days = 0) => moment().add(days, 'days').week();
 
 export const getMonth = (days = 0) => {
   const monthAsNr = moment().add(days, 'days').month();

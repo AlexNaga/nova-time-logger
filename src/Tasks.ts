@@ -1,7 +1,7 @@
 import { Config } from './lib/Config';
 import { CommanderStatic } from 'commander';
 import { infoMsg, quoteMsg } from './lib/logHelper';
-import { getDate, isWeekend } from './lib/dateHelper';
+import { getDate, isWeekend, getWeekNr } from './lib/dateHelper';
 import { NovaHandler } from './NovaHandler';
 import { timer } from './lib/Timer';
 import chalk from 'chalk';
@@ -22,6 +22,7 @@ export class Tasks {
       }
 
       const date = getDate({ divider: '/', days: this.novaConfig.days });
+      const weekNr = getWeekNr(this.novaConfig.days);
 
       const novaHandler = new NovaHandler(this.novaConfig);
       const tasks = taskz([
@@ -29,7 +30,7 @@ export class Tasks {
           text: chalk.magenta(this.novaConfig.site),
           tasks: taskz([
             {
-              text: `${date}: Adding time report${this.novaConfig.week ? ' for week' : ''}.`,
+              text: `${date}: Adding time report${this.novaConfig.week ? ` for week ${weekNr}` : ''}.`,
               task: async () => await novaHandler.run(),
             },
           ]),

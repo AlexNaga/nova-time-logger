@@ -1,7 +1,7 @@
 import { BrowserHandler } from './BrowserHandler';
 import { capitalize } from './lib/fileHelper';
 import { Config, validateInt } from './lib/Config';
-import { getDate, getMonth, getLastMonth, getDaysOfThisWeek } from './lib/dateHelper';
+import { getDate, getMonth, getLastMonth, getDaysOfThisWeek, getWeekNr } from './lib/dateHelper';
 import { successMsg } from './lib/logHelper';
 import chalk from 'chalk';
 
@@ -35,14 +35,15 @@ class NovaHandler extends BrowserHandler {
 
       if (shiftAlreadyExists) {
         await this.exit();
-        throw new Error(`${friday.date}: Already reported for this week in ${chalk.magenta(this.config.site)}.`);
+        const weekNr = getWeekNr(this.config.days);
+        throw new Error(`Already reported for week ${weekNr} in ${chalk.magenta(this.config.site)}.`);
       }
 
       await this.addShift();
       await this.waitForTimeReportPage();
 
     } else {
-      const dateToCheck = getDate({ divider: '/', days: this.config.days});
+      const dateToCheck = getDate({ divider: '/', days: this.config.days });
       const shiftAlreadyExists = await this.isShiftAlreadyAdded(dateToCheck);
 
       if (shiftAlreadyExists) {
@@ -103,7 +104,7 @@ class NovaHandler extends BrowserHandler {
 
   async isSameDate() {
     try {
-      const dateNow = getDate({ divider: '/'});
+      const dateNow = getDate({ divider: '/' });
       await this.hasPageTxt(dateNow);
     } catch (error) {
       await this.exit();
@@ -178,7 +179,7 @@ class NovaHandler extends BrowserHandler {
     const ids = await this.page.$$eval('.text', (elem, project) => elem
       .filter(elem => elem.textContent?.includes(project))
       .map(elem => elem.parentElement?.parentElement?.parentElement?.firstElementChild?.id), this.config.project);
-    return  `#${ids[0]}`;
+    return `#${ids[0]}`;
   }
 
   async clickCreateReport() {
@@ -238,7 +239,7 @@ class NovaHandler extends BrowserHandler {
       }
     };
 
-    if (hasSetIoNumber)  await validateIoNumber();
+    if (hasSetIoNumber) await validateIoNumber();
   }
 
   async addComment(comment = '- ') {
@@ -258,7 +259,7 @@ class NovaHandler extends BrowserHandler {
     if (reportForWeek) {
       await this.page.keyboard.type(monday.date);
     } else {
-      todaysDate = getDate({divider: '/', days });
+      todaysDate = getDate({ divider: '/', days });
       await this.page.keyboard.type(todaysDate);
     }
 
