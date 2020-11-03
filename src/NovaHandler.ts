@@ -114,10 +114,7 @@ class NovaHandler extends BrowserHandler {
 
   async clickTimeReportPage() {
     const timeReportPageXPath = '//button[contains(.,"TIME REPORTING")]';
-    await this.page.waitForXPath(timeReportPageXPath);
-
-    const [timeReportPageBtn] = await this.page.$x(timeReportPageXPath);
-    await timeReportPageBtn.click();
+    await this.waitAndClickXPathBtn(timeReportPageXPath);
     await this.waitForTimeReportPage();
   }
 

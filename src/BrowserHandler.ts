@@ -52,6 +52,12 @@ export class BrowserHandler {
 
   async takeScreenshot(filePath: string) { }
 
+  async waitAndClickXPathBtn(xPathSelector: string) {
+    await this.page.waitForXPath(xPathSelector);
+    const [btn] = await this.page.$x(xPathSelector);
+    await btn.click();
+  }
+
   async closeBrowser() {
     await this.browser.close();
   }
