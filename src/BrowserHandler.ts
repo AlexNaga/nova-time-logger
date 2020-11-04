@@ -52,7 +52,8 @@ export class BrowserHandler {
 
   async takeScreenshot(filePath: string) { }
 
-  async waitAndClickXPathBtn(xPathSelector: string) {
+  async waitAndClickBtnWithTxt(txt: string) {
+    const xPathSelector = `//button[contains(.,"${txt}")]`;
     await this.page.waitForXPath(xPathSelector);
     const [btn] = await this.page.$x(xPathSelector);
     await btn.click();

@@ -113,8 +113,7 @@ class NovaHandler extends BrowserHandler {
   }
 
   async clickTimeReportPage() {
-    const timeReportPageXPath = '//button[contains(.,"TIME REPORTING")]';
-    await this.waitAndClickXPathBtn(timeReportPageXPath);
+    await this.waitAndClickBtnWithTxt('TIME REPORTING');
     await this.waitForTimeReportPage();
   }
 
@@ -143,11 +142,9 @@ class NovaHandler extends BrowserHandler {
   }
 
   async addShift() {
-    const addShiftBtn = '#b0p6o368i0i0r1';
-    await this.page.waitForSelector(addShiftBtn);
-    await this.page.click(addShiftBtn);
+    await this.waitAndClickBtnWithTxt('CREATE NEW TIME REPORT');
 
-    const projectSelectionPage = '#b0p2o1181i0i0r1';
+    const projectSelectionPage = '.v-verticallayout-iwps_portal'; // This seems to only exist on this page
     await this.page.waitForSelector(projectSelectionPage);
 
     await this.clickWantedProject();
@@ -182,9 +179,7 @@ class NovaHandler extends BrowserHandler {
   }
 
   async clickCreateReport() {
-    const createReportBtn = '#b0p3o1211i0i0r1';
-    await this.page.waitForSelector(createReportBtn);
-    await this.page.click(createReportBtn);
+    await this.waitAndClickBtnWithTxt('CREATE REPORT');
   }
 
   async selectCategory() {
@@ -242,7 +237,7 @@ class NovaHandler extends BrowserHandler {
   }
 
   async addComment(comment = '- ') {
-    const commentField = '#b0p1o374i0i0r1';
+    const commentField = '#b0p1o374i0i0r1'; // TODO: Get xpath
     await this.page.waitForSelector(commentField);
     await this.page.click(commentField);
     await this.page.type(commentField, comment);
@@ -273,7 +268,7 @@ class NovaHandler extends BrowserHandler {
   }
 
   async saveTimeReport() {
-    const saveTimeReportBtn = '#b0p2o442i0i0r1';
+    const saveTimeReportBtn = '#b0p2o442i0i0r1'; // TODO: Get xpath
     await this.page.waitForSelector(saveTimeReportBtn);
     await this.page.click(saveTimeReportBtn);
   }
