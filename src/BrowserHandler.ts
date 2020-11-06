@@ -59,6 +59,12 @@ export class BrowserHandler {
     await btn.click();
   }
 
+  async waitAndClickXPath(xPathSelector: string) {
+    await this.page.waitForXPath(xPathSelector);
+    const [elem] = await this.page.$x(xPathSelector);
+    await elem.click();
+  }
+
   async closeBrowser() {
     await this.browser.close();
   }

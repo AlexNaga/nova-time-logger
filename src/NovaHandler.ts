@@ -237,10 +237,9 @@ class NovaHandler extends BrowserHandler {
   }
 
   async addComment(comment = '- ') {
-    const commentField = '#b0p1o374i0i0r1'; // TODO: Get xpath
-    await this.page.waitForSelector(commentField);
-    await this.page.click(commentField);
-    await this.page.type(commentField, comment);
+    const commentFieldXPath = '//div[contains(@class, "placeholder") and contains(text(), "activities")]';
+    await this.waitAndClickXPath(commentFieldXPath);
+    await this.page.keyboard.type(comment);
     await this.page.waitForTimeout(1000);
   }
 
