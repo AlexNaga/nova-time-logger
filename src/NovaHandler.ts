@@ -267,9 +267,7 @@ class NovaHandler extends BrowserHandler {
   }
 
   async saveTimeReport() {
-    const saveTimeReportBtn = '#b0p2o442i0i0r1'; // TODO: Get xpath
-    await this.page.waitForSelector(saveTimeReportBtn);
-    await this.page.click(saveTimeReportBtn);
+    await this.waitAndClickBtnWithTxt('SAVE');
   }
 
   async clickBtn(elem: any) {
