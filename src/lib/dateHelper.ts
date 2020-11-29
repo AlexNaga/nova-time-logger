@@ -6,7 +6,7 @@ interface Day {
   month: string;
 }
 
-interface WeekDays {
+export interface WeekDays {
   monday: Day;
   tuesday: Day;
   wednesday: Day;
