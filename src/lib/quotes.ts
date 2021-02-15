@@ -61,7 +61,6 @@ export const quotes = [
   'Success is how high you bounce after you hit bottom.',
   'Success is simply a matter of luck. Ask any failure.',
   'Take risks, and you \'ll get the payoffs. Learn from your mistakes until you succeed. It \'s that simple.',
-  'Take time to deliberate; but when the time for action arrives, stop thinking and go in.',
   'Teachers open the door. You enter by yourself.',
   'The art of being wise is knowing what to overlook.',
   'The best time to plant a tree is twenty years ago. The second best time is now.',
