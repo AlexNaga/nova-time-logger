@@ -92,10 +92,9 @@ class NovaHandler extends BrowserHandler {
 
   async waitForLoginPage(userField: string, pwField: string, loginBtn: string) {
     try {
-      await this.page.waitForSelector(userField);
-      await this.page.waitForSelector(pwField);
-      await this.page.waitForSelector(loginBtn);
-      await this.hasPageTxt('sign in');
+      await this.page.waitForSelector(userField, { visible: true });
+      await this.page.waitForSelector(pwField, { visible: true });
+      await this.page.waitForSelector(loginBtn, { visible: true });
     } catch (error) {
       await this.exit();
       throw new Error(`Can't open login page on ${chalk.magenta(this.config.site)}.`);
